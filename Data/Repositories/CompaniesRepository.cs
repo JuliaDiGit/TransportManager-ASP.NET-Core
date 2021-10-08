@@ -23,6 +23,8 @@ namespace Data.Repositories
 
         public async Task<CompanyEntity> GetCompanyAsync(int companyId)
         {
+            if (companyId <= 0) throw new ArgumentOutOfRangeException(nameof(companyId));
+
             return await _context.Companies.Where(company => company.CompanyId == companyId && !company.IsDeleted)
                                            .Include(company => company.Drivers.Where(driver => !driver.IsDeleted))
                                            .Include(company => company.Vehicles.Where(vehicle => !vehicle.IsDeleted))
@@ -31,11 +33,11 @@ namespace Data.Repositories
 
         public async Task<CompanyEntity> AddCompanyAsync(Company company)
         {
-            if (company == null) throw new NullReferenceException();
+            if (company == null) throw new ArgumentNullException(nameof(company));
 
-            var entity = await _context.Companies.FindAsync(company.CompanyId);
+            //var entity = await _context.Companies.FindAsync(company.CompanyId);
 
-            if (entity != null && entity.IsDeleted) return entity;
+            //if (entity != null && entity.IsDeleted) return entity;
 
             var companyEntity = _mapper.Map<CompanyEntity>(company);
 
@@ -48,7 +50,7 @@ namespace Data.Repositories
 
         public async Task<CompanyEntity> UpdateCompanyAsync(Company company)
         {
-            if (company == null) throw new NullReferenceException();
+            if (company == null) throw new ArgumentNullException(nameof(company));
 
             var newCompanyEntity = _mapper.Map<CompanyEntity>(company);
 
@@ -89,7 +91,7 @@ namespace Data.Repositories
 
         public async Task<CompanyEntity> RemoveCompanyAsync(int companyId)
         {
-            if (companyId == default) return null;
+            if (companyId <= 0) throw new ArgumentOutOfRangeException(nameof(companyId));
 
             var companyEntity = await _context.Companies.Where(company => company.CompanyId == companyId && !company.IsDeleted)
                                                         .Include(company => company.Drivers.Where(driver => !driver.IsDeleted))

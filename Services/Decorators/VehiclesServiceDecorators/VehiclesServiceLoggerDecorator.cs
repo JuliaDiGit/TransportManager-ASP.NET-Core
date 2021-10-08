@@ -16,14 +16,17 @@ namespace Services.Decorators.VehiclesServiceDecorators
 
         public VehiclesServiceLoggerDecorator(ILogger<VehiclesServiceLoggerDecorator> logger, IVehiclesService inner)
         {
-            _logger = logger;
-            _inner = inner;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _inner = inner ?? throw new ArgumentNullException(nameof(inner));
         }
 
         public async Task<Vehicle> AddVehicleAsync(VehicleModel vehicleModel, string userLogin)
         {
             try
             {
+                if (vehicleModel == null) throw new ArgumentNullException(nameof(vehicleModel));
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 Vehicle vehicle = await _inner.AddVehicleAsync(vehicleModel, userLogin);
 
                 string status, addedVehicleId;
@@ -48,9 +51,11 @@ namespace Services.Decorators.VehiclesServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_AddVehicle} - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null 
+                          ? $"{Resources.Operation_AddVehicle} - {e.GetType()}"
+                          : $"{userLogin} - {Resources.Operation_AddVehicle} - {e.GetType()}";
+
+                _logger.LogError(log);
 
                 throw;
             }
@@ -60,6 +65,9 @@ namespace Services.Decorators.VehiclesServiceDecorators
         {
             try
             {
+                if (vehicleModel == null) throw new ArgumentNullException(nameof(vehicleModel));
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 Vehicle vehicle = await _inner.UpdateVehicleAsync(vehicleModel, userLogin);
 
                 string status = vehicle == null
@@ -75,9 +83,11 @@ namespace Services.Decorators.VehiclesServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_UpdateVehicle} - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null
+                          ? $"{Resources.Operation_UpdateVehicle} - {e.GetType()}"
+                          : $"{userLogin} - {Resources.Operation_UpdateVehicle} - {e.GetType()}";
+
+                _logger.LogError(log);
 
                 throw;
             }
@@ -87,6 +97,9 @@ namespace Services.Decorators.VehiclesServiceDecorators
         {
             try
             {
+                if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 Vehicle vehicle = await _inner.DeleteVehicleByIdAsync(id, userLogin);
 
                 string status = vehicle == null
@@ -102,9 +115,11 @@ namespace Services.Decorators.VehiclesServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_DeleteVehicle} - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null
+                          ? $"{Resources.Operation_DeleteVehicle} ({Id} {id}) - {e.GetType()}"
+                          : $"{userLogin} - {Resources.Operation_DeleteVehicle} ({Id} {id}) - {e.GetType()}";
+
+                _logger.LogError(log);
 
                 throw;
             }
@@ -114,6 +129,9 @@ namespace Services.Decorators.VehiclesServiceDecorators
         {
             try
             {
+                if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 Vehicle vehicle = await _inner.GetVehicleByIdAsync(id, userLogin);
 
                 string status = vehicle == null
@@ -129,9 +147,11 @@ namespace Services.Decorators.VehiclesServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_GetVehicle} - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null
+                          ? $"{Resources.Operation_GetVehicle} ({Id} {id}) - {e.GetType()}"
+                          : $"{userLogin} - {Resources.Operation_GetVehicle} ({Id} {id}) - {e.GetType()}";
+
+                _logger.LogError(log);
 
                 throw;
             }
@@ -141,6 +161,8 @@ namespace Services.Decorators.VehiclesServiceDecorators
         {
             try
             {
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 List<Vehicle> vehicles = await _inner.GetAllVehiclesAsync(userLogin);
 
                 _logger.LogInformation($"{userLogin} - " +
@@ -151,9 +173,11 @@ namespace Services.Decorators.VehiclesServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_GetAllVehicles} - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null
+                          ? $"{Resources.Operation_GetAllVehicles} - {e.GetType()}"
+                          : $"{userLogin} - {Resources.Operation_GetAllVehicles} - {e.GetType()}";
+
+                _logger.LogError(log);
 
                 throw;
             }
@@ -163,6 +187,9 @@ namespace Services.Decorators.VehiclesServiceDecorators
         {
             try
             {
+                if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 Vehicle vehicle = await _inner.RemoveVehicleByIdAsync(id, userLogin);
 
                 string status = vehicle == null
@@ -178,9 +205,12 @@ namespace Services.Decorators.VehiclesServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_RemoveVehicle} - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null
+                          ? $"{Resources.Operation_RemoveVehicle} ({Id} {id}) - {e.GetType()}"
+                          : $"{userLogin} - {Resources.Operation_RemoveVehicle} ({Id} {id}) - {e.GetType()}";
+
+                _logger.LogError(log);
+
                 throw;
             }
         }

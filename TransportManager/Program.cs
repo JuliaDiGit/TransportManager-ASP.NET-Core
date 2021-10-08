@@ -45,10 +45,6 @@ namespace TransportManager
         {
             try
             {
-                //регистрируем кодировку, чтобы получать корректные исключения от БД
-                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-                Encoding.GetEncoding("windows-1251");
-
                 Log.Information("Starting initialize DB");
                 var context = services.GetRequiredService<DataContext>();
                 DbInitializer.Initialize(context);
@@ -56,7 +52,11 @@ namespace TransportManager
             }
             catch (Exception e)
             {
-                Log.Error($"An error occurred creating the DB - {e.Message}");
+                // при возникновении ошибки до подключения к БД используется некорректная кодировка,
+                // поэтому данная ошибка переписана вручную
+                Log.Error(e.Message.Contains("28P01:")
+                          ? "An error occurred creating the DB - 28P01: invalid_password"
+                          : $"An error occurred creating the DB - {e.Message}");
             }
         }
 

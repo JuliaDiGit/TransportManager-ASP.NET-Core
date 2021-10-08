@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Domain;
 using Microsoft.Extensions.Logging;
@@ -20,15 +19,15 @@ namespace Services.Decorators.UsersServiceDecorators
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _inner = inner ?? throw new ArgumentNullException(nameof(inner));
-
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            Encoding.GetEncoding("windows-1251");
         }
 
         public async Task<UserResponse> AddUserAsync(UserRequestModel userRequestModel, string userLogin)
         {
             try
             {
+                if (userRequestModel == null) throw new ArgumentNullException(nameof(userRequestModel));
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 var userResponse = await _inner.AddUserAsync(userRequestModel, userLogin);
 
                 string status, addedUserId;
@@ -57,11 +56,6 @@ namespace Services.Decorators.UsersServiceDecorators
                                  $"{Resources.Operation_AddUser} - " +
                                  $"{e.GetType()}");
 
-                if (e.InnerException != null)
-                {
-                    _logger.LogError($"{e.InnerException.Message}");
-                }
-
                 throw;
             }
         }
@@ -70,6 +64,9 @@ namespace Services.Decorators.UsersServiceDecorators
         {
             try
             {
+                if (userRequestModel == null) throw new ArgumentNullException(nameof(userRequestModel));
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 var userResponse = await _inner.UpdateUserAsync(userRequestModel, userLogin);
 
                 string status = userResponse == null
@@ -86,8 +83,7 @@ namespace Services.Decorators.UsersServiceDecorators
             catch (Exception e)
             {
                 _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_UpdateUser} " +
-                                 $"({Id} {userRequestModel.Id}, {Login} {userRequestModel.Login}) - " +
+                                 $"{Resources.Operation_UpdateUser} - " +
                                  $"{e.GetType()}");
 
                 throw;
@@ -98,6 +94,9 @@ namespace Services.Decorators.UsersServiceDecorators
         {
             try
             {
+                if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 var userResponse = await _inner.DeleteUserByIdAsync(id, userLogin);
 
                 string status = userResponse == null
@@ -126,12 +125,15 @@ namespace Services.Decorators.UsersServiceDecorators
         ///     GetUserByLoginAsync ищет пользователя по логину
         /// </summary>
         /// <param name="login">Логин пользователя, которого нужно найти</param>
-        /// <param name="userLogin">Логин авторизаванного пользователя, которой запрашивает поиск</param>
+        /// <param name="userLogin">Логин авторизаванного пользователя, который запрашивает поиск</param>
         /// <returns></returns>
         public async Task<UserResponse> GetUserByLoginAsync(string login, string userLogin)
         {
             try
             {
+                if (login == null) throw new ArgumentNullException(nameof(login));
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 var userResponse = await _inner.GetUserByLoginAsync(login, userLogin);
 
                 string status = userResponse == null
@@ -159,6 +161,8 @@ namespace Services.Decorators.UsersServiceDecorators
         {
             try
             {
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 var users = await _inner.GetAllUsersAsync(userLogin);
 
                 string status = users == null
@@ -185,6 +189,9 @@ namespace Services.Decorators.UsersServiceDecorators
         {
             try
             {
+                if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 var userResponse = await _inner.RemoveUserByIdAsync(id, userLogin);
 
                 string status = userResponse == null

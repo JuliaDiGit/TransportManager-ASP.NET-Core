@@ -68,7 +68,7 @@ namespace TransportManager.Controllers
         {
             try
             {
-                if (companyModel == null) throw new NullReferenceException();
+                if (companyModel == null) throw new ArgumentNullException(nameof(companyModel));
 
                 var userLogin = HttpContext.User.Identity.Name;
 
@@ -99,7 +99,7 @@ namespace TransportManager.Controllers
         {
             try
             {
-                if (companyModel == null) throw new NullReferenceException();
+                if (companyModel == null) throw new ArgumentNullException(nameof(companyModel));
 
                 var userLogin = HttpContext.User.Identity.Name;
 

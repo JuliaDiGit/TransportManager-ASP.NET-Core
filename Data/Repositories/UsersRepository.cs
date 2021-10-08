@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Data.Repositories.Abstract;
@@ -20,9 +19,6 @@ namespace Data.Repositories
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            Encoding.GetEncoding("windows-1251");
         }
 
         public async Task<UserEntity> GetUserAsync(int id)
@@ -36,7 +32,7 @@ namespace Data.Repositories
 
         public async Task<UserEntity> AddUserAsync(UserRequest userRequest)
         {
-            if (userRequest == null) throw new NullReferenceException();
+            if (userRequest == null) throw new ArgumentNullException(nameof(userRequest));
 
             var userEntity = _mapper.Map<UserEntity>(userRequest);
 
@@ -49,7 +45,7 @@ namespace Data.Repositories
 
         public async Task<UserEntity> UpdateUserAsync(UserRequest userRequest)
         {
-            if (userRequest == null) throw new NullReferenceException();
+            if (userRequest == null) throw new ArgumentNullException(nameof(userRequest));
 
             var userEntity = _mapper.Map<UserEntity>(userRequest);
 
@@ -85,9 +81,9 @@ namespace Data.Repositories
 
         public async Task<UserEntity> GetUserByLoginAsync(string login)
         {
-            if (login == null) throw new NullReferenceException();
+            if (login == null) throw new ArgumentNullException(nameof(login));
 
-            return await _context.Users.Where(user => user.Login.ToLower() == login.ToLower() && !user.IsDeleted)
+            return await _context.Users.Where(user => user.Login == login && !user.IsDeleted)
                                        .FirstOrDefaultAsync();
         }
 

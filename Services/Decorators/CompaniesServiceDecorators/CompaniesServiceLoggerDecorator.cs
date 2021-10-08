@@ -16,14 +16,17 @@ namespace Services.Decorators.CompaniesServiceDecorators
 
         public CompaniesServiceLoggerDecorator(ILogger<CompaniesServiceLoggerDecorator> logger, ICompaniesService inner)
         {
-            _logger = logger;
-            _inner = inner;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _inner = inner ?? throw new ArgumentNullException(nameof(inner));
         }
 
         public async Task<Company> GetCompanyByCompanyIdAsync(int companyId, string userLogin)
         {
             try
             {
+                if (companyId <= 0) throw new ArgumentOutOfRangeException(nameof(companyId));
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 Company company = await _inner.GetCompanyByCompanyIdAsync(companyId, userLogin);
 
                 string status = company == null
@@ -51,6 +54,9 @@ namespace Services.Decorators.CompaniesServiceDecorators
         {
             try
             {
+                if (companyModel == null) throw new ArgumentNullException(nameof(companyModel));
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 Company company = await _inner.AddCompanyAsync(companyModel, userLogin);
 
                 string status = company == null 
@@ -67,8 +73,7 @@ namespace Services.Decorators.CompaniesServiceDecorators
             catch (Exception e)
             {
                 _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_AddCompany} " +
-                                 $"({CompanyId} {companyModel.CompanyId}) - " +
+                                 $"{Resources.Operation_AddCompany} - " +
                                  $"{e.GetType()}");
                 throw;
             }
@@ -78,6 +83,9 @@ namespace Services.Decorators.CompaniesServiceDecorators
         {
             try
             {
+                if (companyModel == null) throw new ArgumentNullException(nameof(companyModel));
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 Company company = await _inner.UpdateCompanyAsync(companyModel, userLogin);
 
                 string status = company == null
@@ -94,8 +102,7 @@ namespace Services.Decorators.CompaniesServiceDecorators
             catch (Exception e)
             {
                 _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_UpdateCompany} " +
-                                 $"({CompanyId} {companyModel.CompanyId}) - " +
+                                 $"{Resources.Operation_UpdateCompany} - " +
                                  $"{e.GetType()}");
 
                 throw;
@@ -106,6 +113,9 @@ namespace Services.Decorators.CompaniesServiceDecorators
         {
             try
             {
+                if (companyId <= 0) throw new ArgumentOutOfRangeException(nameof(companyId));
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 Company company = await _inner.DeleteCompanyByCompanyIdAsync(companyId, userLogin);
 
                 string status = company == null 
@@ -134,6 +144,8 @@ namespace Services.Decorators.CompaniesServiceDecorators
         {
             try
             {
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 List<Company> companies = await _inner.GetAllCompaniesAsync(userLogin);
 
                 _logger.LogInformation($"{userLogin} - " +
@@ -155,6 +167,9 @@ namespace Services.Decorators.CompaniesServiceDecorators
         {
             try
             {
+                if (companyId <= 0) throw new ArgumentOutOfRangeException(nameof(companyId));
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 Company company = await _inner.RemoveCompanyByCompanyIdAsync(companyId, userLogin);
 
                 string status = company == null

@@ -24,6 +24,7 @@ namespace Services
         public async Task<Driver> GetDriverByIdAsync(int id, string userLogin)
         {
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
             var driverEntity = await _driversRepository.GetDriverAsync(id);
 
@@ -33,6 +34,7 @@ namespace Services
         public async Task<Driver> AddDriverAsync(DriverModel driverModel, string userLogin)
         {
             if (driverModel == null) throw new ArgumentNullException(nameof(driverModel));
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
             var driver = _mapper.Map<Driver>(driverModel);
             var driverEntity = await _driversRepository.AddDriverAsync(driver);
@@ -43,6 +45,7 @@ namespace Services
         public async Task<Driver> UpdateDriverAsync(DriverModel driverModel, string userLogin)
         {
             if (driverModel == null) throw new ArgumentNullException(nameof(driverModel));
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
             var driver = _mapper.Map<Driver>(driverModel);
             var driverEntity = await _driversRepository.UpdateDriverAsync(driver);
@@ -53,6 +56,7 @@ namespace Services
         public async Task<Driver> DeleteDriverByIdAsync(int id, string userLogin)
         {
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
             var driver = await _driversRepository.DeleteDriverAsync(id);
 
@@ -61,6 +65,8 @@ namespace Services
 
         public async Task<List<Driver>> GetAllDriversAsync(string userLogin)
         {
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
             return (await _driversRepository.GetAllDriversAsync())?
                                             .Select(driverEntity => _mapper.Map<Driver>(driverEntity))
                                             .ToList();
@@ -69,6 +75,7 @@ namespace Services
         public async Task<Driver> RemoveDriverByIdAsync(int id, string userLogin)
         {
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
             var driverEntity = await _driversRepository.RemoveDriverAsync(id);
 

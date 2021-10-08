@@ -16,14 +16,17 @@ namespace Services.Decorators.DriversServiceDecorators
 
         public DriversServiceLoggerDecorator(ILogger<DriversServiceLoggerDecorator> logger, IDriversService inner)
         {
-            _logger = logger;
-            _inner = inner;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _inner = inner ?? throw new ArgumentNullException(nameof(inner));
         }
 
         public async Task<Driver> AddDriverAsync(DriverModel driverModel, string userLogin)
         {
             try
             {
+                if (driverModel == null) throw new ArgumentNullException(nameof(driverModel));
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 Driver driver = await _inner.AddDriverAsync(driverModel, userLogin);
 
                 string status, addedDriverId;
@@ -59,6 +62,9 @@ namespace Services.Decorators.DriversServiceDecorators
         {
             try
             {
+                if (driverModel == null) throw new ArgumentNullException(nameof(driverModel));
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 Driver driver = await _inner.UpdateDriverAsync(driverModel, userLogin);
 
                 string status = driver == null
@@ -85,6 +91,9 @@ namespace Services.Decorators.DriversServiceDecorators
         {
             try
             {
+                if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 Driver driver = await _inner.DeleteDriverByIdAsync(id, userLogin);
 
                 string status = driver == null
@@ -101,7 +110,8 @@ namespace Services.Decorators.DriversServiceDecorators
             catch (Exception e)
             {
                 _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_DeleteDriver} - " +
+                                 $"{Resources.Operation_DeleteDriver} " +
+                                 $"({Id} {id}) - " +
                                  $"{e.GetType()}");
                 throw;
             }
@@ -111,6 +121,9 @@ namespace Services.Decorators.DriversServiceDecorators
         {
             try
             {
+                if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 Driver driver = await _inner.GetDriverByIdAsync(id, userLogin);
 
                 string status = driver == null
@@ -127,7 +140,8 @@ namespace Services.Decorators.DriversServiceDecorators
             catch (Exception e)
             {
                 _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_GetDriver} - " +
+                                 $"{Resources.Operation_GetDriver} " +
+                                 $"({Id} {id}) - " +
                                  $"{e.GetType()}");
                 throw;
             }
@@ -137,6 +151,8 @@ namespace Services.Decorators.DriversServiceDecorators
         {
             try
             {
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 List<Driver> drivers = await _inner.GetAllDriversAsync(userLogin);
 
                 _logger.LogInformation($"{userLogin} - " + 
@@ -158,6 +174,9 @@ namespace Services.Decorators.DriversServiceDecorators
         {
             try
             {
+                if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
                 Driver driver = await _inner.RemoveDriverByIdAsync(id, userLogin);
 
                 string status = driver == null
@@ -174,7 +193,8 @@ namespace Services.Decorators.DriversServiceDecorators
             catch (Exception e)
             {
                 _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_RemoveDriver} - " +
+                                 $"{Resources.Operation_RemoveDriver} " +
+                                 $"({Id} {id}) - " +
                                  $"{e.GetType()}");
                 throw;
             }

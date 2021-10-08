@@ -24,6 +24,7 @@ namespace Services
         public async Task<Company> GetCompanyByCompanyIdAsync(int companyId, string userLogin)
         {
             if (companyId <= 0) throw new ArgumentOutOfRangeException(nameof(companyId));
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
             var companyEntity = await _companiesRepository.GetCompanyAsync(companyId);
 
@@ -33,6 +34,7 @@ namespace Services
         public async Task<Company> AddCompanyAsync(CompanyModel companyModel, string userLogin)
         {
             if (companyModel == null) throw new ArgumentNullException(nameof(companyModel));
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
             var company = _mapper.Map<Company>(companyModel);
             var companyEntity = await _companiesRepository.AddCompanyAsync(company);
@@ -44,6 +46,7 @@ namespace Services
         public async Task<Company> UpdateCompanyAsync(CompanyModel companyModel, string userLogin)
         {
             if (companyModel == null) throw new ArgumentNullException(nameof(companyModel));
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
             var company = _mapper.Map<Company>(companyModel);
             var companyEntity = await _companiesRepository.UpdateCompanyAsync(company);
@@ -56,6 +59,7 @@ namespace Services
         public async Task<Company> DeleteCompanyByCompanyIdAsync(int companyId, string userLogin)
         {
             if (companyId <= 0) throw new ArgumentOutOfRangeException(nameof(companyId));
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
             var companyEntity = await _companiesRepository.DeleteCompanyAsync(companyId);
 
@@ -64,6 +68,8 @@ namespace Services
 
         public async Task<List<Company>> GetAllCompaniesAsync(string userLogin)
         {
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
             return (await _companiesRepository.GetAllCompaniesAsync())?
                                               .Select(companyEntity => _mapper.Map<Company>(companyEntity))
                                               .ToList();
@@ -72,6 +78,7 @@ namespace Services
         public async Task<Company> RemoveCompanyByCompanyIdAsync(int companyId, string userLogin)
         {
             if (companyId <= 0) throw new ArgumentOutOfRangeException(nameof(companyId));
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
             var companyEntity = await _companiesRepository.RemoveCompanyAsync(companyId);
 

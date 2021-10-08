@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using Services.Abstract;
@@ -13,6 +14,7 @@ namespace TransportManager.Controllers
     /// </summary>
     [ApiController]
     [Route("users")]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUsersService _usersService;
@@ -20,8 +22,8 @@ namespace TransportManager.Controllers
 
         public UsersController(IUsersService usersService, IMapper mapper)
         {
-            _usersService = usersService;
-            _mapper = mapper;
+            _usersService = usersService ?? throw new ArgumentNullException(nameof(usersService));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         /// <summary>
@@ -61,6 +63,7 @@ namespace TransportManager.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddUserAsync(UserRequestModel userRequestModel)
         {
             try
@@ -88,6 +91,7 @@ namespace TransportManager.Controllers
         /// <returns></returns>
         [HttpPut]
         [Route("")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateUserAsync(UserRequestModel userRequestModel)
         {
             try
@@ -118,6 +122,7 @@ namespace TransportManager.Controllers
         /// <returns></returns>
         [HttpDelete]
         [Route("")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUserAsync(int id)
         {
             try
@@ -175,6 +180,7 @@ namespace TransportManager.Controllers
         /// <returns></returns>
         [HttpPut]
         [Route("remove")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoveUserByIdAsync(int id)
         {
             try

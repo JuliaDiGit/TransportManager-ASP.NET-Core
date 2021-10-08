@@ -24,6 +24,7 @@ namespace Services
         public async Task<Vehicle> GetVehicleByIdAsync(int id, string userLogin)
         {
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
             var vehicleEntity = await _vehiclesRepository.GetVehicleAsync(id);
 
@@ -33,7 +34,8 @@ namespace Services
         public async Task<Vehicle> AddVehicleAsync(VehicleModel vehicleModel, string userLogin)
         {
             if (vehicleModel == null) throw new ArgumentNullException(nameof(vehicleModel));
-            
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
             var vehicle = _mapper.Map<Vehicle>(vehicleModel);
             var vehicleEntity = await _vehiclesRepository.AddVehicleAsync(vehicle);
 
@@ -43,6 +45,7 @@ namespace Services
         public async Task<Vehicle> UpdateVehicleAsync(VehicleModel vehicleModel, string userLogin)
         {
             if (vehicleModel == null) throw new ArgumentNullException(nameof(vehicleModel));
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
             var vehicle = _mapper.Map<Vehicle>(vehicleModel);
             var vehicleEntity = await _vehiclesRepository.UpdateVehicleAsync(vehicle);
@@ -53,6 +56,7 @@ namespace Services
         public async Task<Vehicle> DeleteVehicleByIdAsync(int id, string userLogin)
         {
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
             var vehicleEntity = await _vehiclesRepository.DeleteVehicleAsync(id);
 
@@ -60,7 +64,9 @@ namespace Services
         }
 
         public async Task<List<Vehicle>> GetAllVehiclesAsync(string userLogin)
-        { 
+        {
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
             return (await _vehiclesRepository.GetAllVehiclesAsync())
                                              .Select(entity => _mapper.Map<Vehicle>(entity))
                                              .ToList();
@@ -69,6 +75,7 @@ namespace Services
         public async Task<Vehicle> RemoveVehicleByIdAsync(int id, string userLogin)
         {
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
             var vehicleEntity = await _vehiclesRepository.RemoveVehicleAsync(id);
 

@@ -8,14 +8,16 @@ namespace Data
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
-
         }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder.EnableSensitiveDataLogging(false);
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // добавляем соотвествие, которое убирает чувствительность к регистру
+            modelBuilder.HasCollation("case_insensitive_collation", 
+                                      locale: "en-u-ks-primary", 
+                                      provider: "icu",
+                                      deterministic: false);
+
             modelBuilder.ApplyConfiguration(new CompanyEntityConfiguration());
             modelBuilder.ApplyConfiguration(new DriverEntityConfiguration());
             modelBuilder.ApplyConfiguration(new VehicleEntityConfiguration());

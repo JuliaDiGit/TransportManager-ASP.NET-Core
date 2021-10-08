@@ -25,6 +25,7 @@ namespace Services
         public async Task<UserResponse> AddUserAsync(UserRequestModel userRequestModel, string userLogin)
         {
             if (userRequestModel == null) throw new ArgumentNullException(nameof(userRequestModel));
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
             var user = _mapper.Map<UserRequest>(userRequestModel);
 
@@ -39,6 +40,7 @@ namespace Services
         public async Task<UserResponse> UpdateUserAsync(UserRequestModel userRequestModel, string userLogin)
         {
             if (userRequestModel == null) throw new ArgumentNullException(nameof(userRequestModel));
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
             var user = _mapper.Map<UserRequest>(userRequestModel);
 
@@ -53,6 +55,7 @@ namespace Services
         public async Task<UserResponse> DeleteUserByIdAsync(int id, string userLogin)
         {
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
             var userEntity = await _usersRepository.DeleteUserAsync(id);
 
@@ -62,6 +65,7 @@ namespace Services
         public async Task<UserResponse> GetUserByLoginAsync(string login, string userLogin)
         {
             if (login == null) throw new ArgumentNullException(nameof(login));
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
             var userEntity = await _usersRepository.GetUserByLoginAsync(login);
 
@@ -70,6 +74,8 @@ namespace Services
 
         public async Task<List<UserResponse>> GetAllUsersAsync(string userLogin)
         {
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
             return (await _usersRepository.GetAllUsersAsync())?
                                           .Select(userEntity => _mapper.Map<UserResponse>(userEntity))
                                           .ToList();
@@ -78,6 +84,7 @@ namespace Services
         public async Task<UserResponse> RemoveUserByIdAsync(int id, string userLogin)
         {
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+            if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
             var userEntity = await _usersRepository.RemoveUserAsync(id);
 
