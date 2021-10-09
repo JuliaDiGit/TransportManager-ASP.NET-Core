@@ -35,10 +35,6 @@ namespace Data.Repositories
         {
             if (company == null) throw new ArgumentNullException(nameof(company));
 
-            //var entity = await _context.Companies.FindAsync(company.CompanyId);
-
-            //if (entity != null && entity.IsDeleted) return entity;
-
             var companyEntity = _mapper.Map<CompanyEntity>(company);
 
             var addedCompany = await _context.Companies.AddAsync(companyEntity);

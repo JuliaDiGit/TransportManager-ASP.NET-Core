@@ -27,25 +27,13 @@ namespace Services.Decorators.VehiclesServiceDecorators
                 if (vehicleModel == null) throw new ArgumentNullException(nameof(vehicleModel));
                 if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
-                Vehicle vehicle = await _inner.AddVehicleAsync(vehicleModel, userLogin);
+                var vehicle = await _inner.AddVehicleAsync(vehicleModel, userLogin);
 
-                string status, addedVehicleId;
+                var log = vehicle == null
+                         ? $"{userLogin} - {Resources.Operation_AddVehicle} - {Resources.Status_Fail}"
+                         : $"{userLogin} - {Resources.Operation_AddVehicle} ({Id} {vehicle.Id}) - {Resources.Status_Success}";
 
-                if (vehicle == null)
-                {
-                    status = Resources.Status_Fail;
-                    addedVehicleId = "";
-                }
-                else
-                {
-                    status = Resources.Status_Success;
-                    addedVehicleId = $"{Id} {vehicle.Id}";
-                }
-
-                _logger.LogInformation($"{userLogin} - " +
-                                       $"{Resources.Operation_AddVehicle} " +
-                                       $"({addedVehicleId}) " +
-                                       $"- {status}");
+                _logger.LogInformation(log);
 
                 return vehicle;
             }
@@ -68,11 +56,11 @@ namespace Services.Decorators.VehiclesServiceDecorators
                 if (vehicleModel == null) throw new ArgumentNullException(nameof(vehicleModel));
                 if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
-                Vehicle vehicle = await _inner.UpdateVehicleAsync(vehicleModel, userLogin);
+                var vehicle = await _inner.UpdateVehicleAsync(vehicleModel, userLogin);
 
-                string status = vehicle == null
-                                ? Resources.Status_Fail
-                                : Resources.Status_Success;
+                var status = vehicle == null
+                            ? Resources.Status_Fail
+                            : Resources.Status_Success;
 
                 _logger.LogInformation($"{userLogin} - " +
                                        $"{Resources.Operation_UpdateVehicle} " +
@@ -100,11 +88,11 @@ namespace Services.Decorators.VehiclesServiceDecorators
                 if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
                 if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
-                Vehicle vehicle = await _inner.DeleteVehicleByIdAsync(id, userLogin);
+                var vehicle = await _inner.DeleteVehicleByIdAsync(id, userLogin);
 
-                string status = vehicle == null
-                                ? Resources.Status_Fail
-                                : Resources.Status_Success;
+                var status = vehicle == null
+                            ? Resources.Status_Fail
+                            : Resources.Status_Success;
 
                 _logger.LogInformation($"{userLogin} - " +
                                        $"{Resources.Operation_DeleteVehicle} " +
@@ -132,11 +120,11 @@ namespace Services.Decorators.VehiclesServiceDecorators
                 if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
                 if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
-                Vehicle vehicle = await _inner.GetVehicleByIdAsync(id, userLogin);
+                var vehicle = await _inner.GetVehicleByIdAsync(id, userLogin);
 
-                string status = vehicle == null
-                                ? Resources.Status_NotFound
-                                : Resources.Status_Success;
+                var status = vehicle == null
+                            ? Resources.Status_NotFound
+                            : Resources.Status_Success;
 
                 _logger.LogInformation($"{userLogin} - " +
                                        $"{Resources.Operation_GetVehicle} " +
@@ -163,7 +151,7 @@ namespace Services.Decorators.VehiclesServiceDecorators
             {
                 if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
-                List<Vehicle> vehicles = await _inner.GetAllVehiclesAsync(userLogin);
+                var vehicles = await _inner.GetAllVehiclesAsync(userLogin);
 
                 _logger.LogInformation($"{userLogin} - " +
                                        $"{Resources.Operation_GetAllVehicles} - " +
@@ -190,11 +178,11 @@ namespace Services.Decorators.VehiclesServiceDecorators
                 if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
                 if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
-                Vehicle vehicle = await _inner.RemoveVehicleByIdAsync(id, userLogin);
+                var vehicle = await _inner.RemoveVehicleByIdAsync(id, userLogin);
 
-                string status = vehicle == null
-                                ? Resources.Status_Fail
-                                : Resources.Status_Success;
+                var status = vehicle == null
+                            ? Resources.Status_Fail
+                            : Resources.Status_Success;
 
                 _logger.LogInformation($"{userLogin} - " +
                                        $"{Resources.Operation_RemoveVehicle} " +

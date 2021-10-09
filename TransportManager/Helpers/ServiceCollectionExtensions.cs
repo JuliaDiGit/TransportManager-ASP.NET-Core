@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 namespace TransportManager.Helpers
 {
     /// <summary>
-    ///     класс ServiceCollectionExtensions даёт возможность регистрировать декораторы в IoC контейнере
+    ///     класс ServiceCollectionExtensions даёт возможность регистрировать декораторы в IoC контейнерах
     /// </summary>
     public static class ServiceCollectionExtensions
     {
