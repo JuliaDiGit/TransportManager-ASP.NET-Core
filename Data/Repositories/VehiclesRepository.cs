@@ -35,6 +35,18 @@ namespace Data.Repositories
 
             var vehicleEntity = _mapper.Map<VehicleEntity>(vehicle);
 
+            // если DriverId задано, то CompanyId берём от водителя
+            if (vehicleEntity.DriverId != null)
+            {
+                var driverEntity = await _context.Drivers.Where(driver => driver.Id == vehicleEntity.DriverId && 
+                                                                          !driver.IsDeleted)
+                                                         .FirstOrDefaultAsync();
+
+                if (driverEntity == null) throw new Exception($"Водитель Id {vehicleEntity.DriverId} не найден!");
+
+                vehicleEntity.CompanyId = driverEntity.CompanyId;
+            }
+
             var addedVehicle = await _context.Vehicles.AddAsync(vehicleEntity);
 
             await _context.SaveChangesAsync();
@@ -47,6 +59,18 @@ namespace Data.Repositories
             if (vehicle == null) throw new ArgumentNullException(nameof(vehicle));
 
             var vehicleEntity = _mapper.Map<VehicleEntity>(vehicle);
+
+            // если DriverId задано, то CompanyId берём от водителя
+            if (vehicleEntity.DriverId != null)
+            {
+                var driverEntity = await _context.Drivers.Where(driver => driver.Id == vehicleEntity.DriverId && 
+                                                                          !driver.IsDeleted)
+                                                         .FirstOrDefaultAsync();
+
+                if (driverEntity == null) throw new Exception($"Водитель Id {vehicleEntity.DriverId} не найден!");
+
+                vehicleEntity.CompanyId = driverEntity.CompanyId;
+            }
 
             var updVehicle = _context.Vehicles.Update(vehicleEntity);
 

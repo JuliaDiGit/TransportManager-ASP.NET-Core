@@ -3,8 +3,17 @@ using Entities;
 
 namespace Data
 {
+    /// <summary>
+    ///     DbInitializer используется для проверки наличия БД,
+    ///     создания БД (если её ещё нет) и для первичного добавления данных
+    /// </summary>
     public static class DbInitializer
     {
+        /// <summary>
+        ///     метод Initialize проверяет, создана ли уже БД, если нет, то создаёт её
+        ///     и добавляет первичные данные
+        /// </summary>
+        /// <param name="context"></param>
         public static void Initialize(DataContext context)
         {
             var createdNow = context.Database.EnsureCreated();

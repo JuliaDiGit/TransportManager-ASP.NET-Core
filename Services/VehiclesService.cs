@@ -37,6 +37,7 @@ namespace Services
             if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
             var vehicle = _mapper.Map<Vehicle>(vehicleModel);
+            vehicle.GovernmentNumber = vehicle.GovernmentNumber.ToUpper(); // для правильности переводим номер в верхний регистр
             var vehicleEntity = await _vehiclesRepository.AddVehicleAsync(vehicle);
 
             return _mapper.Map<Vehicle>(vehicleEntity);
@@ -48,6 +49,7 @@ namespace Services
             if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
             var vehicle = _mapper.Map<Vehicle>(vehicleModel);
+            vehicle.GovernmentNumber = vehicle.GovernmentNumber.ToUpper(); // для правильности переводим номер в верхний регистр
             var vehicleEntity = await _vehiclesRepository.UpdateVehicleAsync(vehicle);
 
             return _mapper.Map<Vehicle>(vehicleEntity);

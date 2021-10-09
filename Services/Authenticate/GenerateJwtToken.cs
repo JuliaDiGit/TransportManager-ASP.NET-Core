@@ -8,8 +8,17 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Services.Authenticate
 {
+    /// <summary>
+    ///     GenerateJwtToken используется для создания JWT токена
+    /// </summary>
     public static class GenerateJwtToken
     {
+        /// <summary>
+        ///     метод GenerateUserJwtToken создаёт JWT токен для пользователя
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <param name="userAuthenticateResponse"></param>
+        /// <returns></returns>
         public static string GenerateUserJwtToken(this IConfiguration configuration, 
                                                   UserAuthenticateResponse userAuthenticateResponse)
         {
@@ -29,7 +38,7 @@ namespace Services.Authenticate
                 }),
 
                 //срок действия токена
-                Expires = DateTime.UtcNow.AddMinutes(5),
+                Expires = DateTime.UtcNow.AddMinutes(15),
 
                 //установка ключа и алгоритма для создания токена
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), 

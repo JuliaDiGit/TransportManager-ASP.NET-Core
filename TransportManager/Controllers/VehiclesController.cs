@@ -72,8 +72,6 @@ namespace TransportManager.Controllers
 
                 var userLogin = HttpContext.User.Identity.Name;
 
-                vehicleModel.GovernmentNumber = vehicleModel.GovernmentNumber.ToUpper();
-
                 var vehicle = await _vehiclesService.AddVehicleAsync(vehicleModel, userLogin);
                 var addedVehicleModel = _mapper.Map<VehicleModel>(vehicle);
 

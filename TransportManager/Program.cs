@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Text;
 using Data;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -35,7 +34,7 @@ namespace TransportManager
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .UseSerilog((hostingContext, loggerConfig) => 
-                    loggerConfig.ReadFrom.Configuration(hostingContext.Configuration))
+                    loggerConfig.ReadFrom.Configuration(hostingContext.Configuration)) // используем настройки через appsettings.json
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
@@ -59,10 +58,5 @@ namespace TransportManager
                           : $"An error occurred creating the DB - {e.Message}");
             }
         }
-
-        //ЗАДАНИЕ:
-        //переписать предыдущий проект(только запросы, без статистик, для БД использовать EF и PostgreSQL) на ASP.
-        //для маппинга использовать Automapper, добавить авторизацию/аутентификацию(желательно с JWT. описать принцип работы и настройки в README).
-
     }
 }

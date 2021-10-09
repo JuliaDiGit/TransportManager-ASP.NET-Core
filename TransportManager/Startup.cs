@@ -71,6 +71,7 @@ namespace TransportManager
                     Description = "Поместите в данное поле токен, полученный при авторизации" //описание (необязательный параметр)
                 });
 
+                // AddSecurityRequirement позволяет применять схемы глобально (ко всем операциям с атрибутом Authorize) 
                 options.AddSecurityRequirement(new OpenApiSecurityRequirement {
                     {
                         new OpenApiSecurityScheme
@@ -78,7 +79,7 @@ namespace TransportManager
                             Reference = new OpenApiReference
                             {
                                 Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
+                                Id = "Bearer" // название схемы, которая будет применяться 
                             }
                         },
                         new string[] { }
