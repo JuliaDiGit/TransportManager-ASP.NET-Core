@@ -22,11 +22,14 @@ namespace Services.Decorators.AuthorizationServiceDecorators
         {
             try
             {
+                if (userRegistrationRequestModel == null)
+                    throw new ArgumentNullException(nameof(userRegistrationRequestModel));
+
                 var userAuthenticateResponse = await _inner.Register(userRegistrationRequestModel);
 
-                string status = userAuthenticateResponse == null
-                                ? Resources.Status_Fail
-                                : Resources.Status_Success;
+                var status = userAuthenticateResponse == null
+                             ? Resources.Status_Fail
+                             : Resources.Status_Success;
 
                 _logger.LogInformation($"{userRegistrationRequestModel.Login} - " +
                                        $"{Resources.Operation_Register} - " +
@@ -36,8 +39,7 @@ namespace Services.Decorators.AuthorizationServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userRegistrationRequestModel.Login} - " +
-                                 $"{Resources.Operation_Register} - " +
+                _logger.LogError($"{Resources.Operation_Register} - " +
                                  $"{e.GetType()} - " + 
                                  $"{e.Message}");
 
@@ -49,11 +51,14 @@ namespace Services.Decorators.AuthorizationServiceDecorators
         {
             try
             {
+                if (userAuthenticateRequestModel == null)
+                    throw new ArgumentNullException(nameof(userAuthenticateRequestModel));
+
                 var userAuthenticateResponse = await _inner.Login(userAuthenticateRequestModel);
 
-                string status = userAuthenticateResponse == null
-                                ? Resources.Status_Fail
-                                : Resources.Status_Success;
+                var status = userAuthenticateResponse == null
+                             ? Resources.Status_Fail
+                             : Resources.Status_Success;
 
                 _logger.LogInformation($"{userAuthenticateRequestModel.Login} - " +
                                        $"{Resources.Operation_Login} - " +
@@ -63,10 +68,11 @@ namespace Services.Decorators.AuthorizationServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userAuthenticateRequestModel.Login} - " +
-                                 $"{Resources.Operation_Login} - " +
-                                 $"{e.GetType()} - " +
-                                 $"{e.Message}");
+                var log = userAuthenticateRequestModel == null
+                          ? $"{Resources.Operation_Login} - {e.GetType()} - {e.Message}"
+                          : $"{userAuthenticateRequestModel.Login} - {Resources.Operation_Login} - {e.GetType()} - {e.Message}";
+
+                _logger.LogError(log);
 
                 throw;
             }

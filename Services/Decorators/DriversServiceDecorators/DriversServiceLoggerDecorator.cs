@@ -27,33 +27,24 @@ namespace Services.Decorators.DriversServiceDecorators
                 if (driverModel == null) throw new ArgumentNullException(nameof(driverModel));
                 if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
-                Driver driver = await _inner.AddDriverAsync(driverModel, userLogin);
+                var driver = await _inner.AddDriverAsync(driverModel, userLogin);
 
-                string status, addedDriverId;
+                var log = driver == null
+                          ? $"{userLogin} - {Resources.Operation_AddDriver} - {Resources.Status_Fail}"
+                          : $"{userLogin} - {Resources.Operation_AddDriver} ({Id} {driver.Id}) - {Resources.Status_Success}";
 
-                if (driver == null)
-                {
-                    status = Resources.Status_Fail;
-                    addedDriverId = "";
-                }
-                else
-                {
-                    status = Resources.Status_Success;
-                    addedDriverId = $"{Id} {driver.Id}";
-                }
-
-                _logger.LogInformation($"{userLogin} - " + 
-                                       $"{Resources.Operation_AddDriver} " +
-                                       $"({addedDriverId}) " +
-                                       $"- {status}");
+                _logger.LogInformation(log);
 
                 return driver;
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_AddDriver} - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null 
+                          ? $"{Resources.Operation_AddDriver} - {e.GetType()}" 
+                          : $"{userLogin} - {Resources.Operation_AddDriver} - {e.GetType()}";
+
+                _logger.LogError(log);
+
                 throw;
             }
         }
@@ -65,11 +56,11 @@ namespace Services.Decorators.DriversServiceDecorators
                 if (driverModel == null) throw new ArgumentNullException(nameof(driverModel));
                 if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
-                Driver driver = await _inner.UpdateDriverAsync(driverModel, userLogin);
+                var driver = await _inner.UpdateDriverAsync(driverModel, userLogin);
 
-                string status = driver == null
-                                ? Resources.Status_Fail
-                                : Resources.Status_Success;
+                var status = driver == null
+                             ? Resources.Status_Fail
+                             : Resources.Status_Success;
 
                 _logger.LogInformation($"{userLogin} - " + 
                                        $"{Resources.Operation_UpdateDriver} " +
@@ -80,9 +71,12 @@ namespace Services.Decorators.DriversServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_UpdateDriver} - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null 
+                          ? $"{Resources.Operation_UpdateDriver} - {e.GetType()}" 
+                          : $"{userLogin} - {Resources.Operation_UpdateDriver} - {e.GetType()}";
+
+                _logger.LogError(log);
+
                 throw;
             }
         }
@@ -94,11 +88,11 @@ namespace Services.Decorators.DriversServiceDecorators
                 if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
                 if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
-                Driver driver = await _inner.DeleteDriverByIdAsync(id, userLogin);
+                var driver = await _inner.DeleteDriverByIdAsync(id, userLogin);
 
-                string status = driver == null
-                                ? Resources.Status_Fail
-                                : Resources.Status_Success;
+                var status = driver == null
+                             ? Resources.Status_Fail
+                             : Resources.Status_Success;
 
                 _logger.LogInformation($"{userLogin} - " + 
                                        $"{Resources.Operation_DeleteDriver} " +
@@ -109,10 +103,12 @@ namespace Services.Decorators.DriversServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_DeleteDriver} " +
-                                 $"({Id} {id}) - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null 
+                          ? $"{Resources.Operation_DeleteDriver} - {e.GetType()}" 
+                          : $"{userLogin} - {Resources.Operation_DeleteDriver} - {e.GetType()}";
+
+                _logger.LogError(log);
+
                 throw;
             }
         }
@@ -124,11 +120,11 @@ namespace Services.Decorators.DriversServiceDecorators
                 if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
                 if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
-                Driver driver = await _inner.GetDriverByIdAsync(id, userLogin);
+                var driver = await _inner.GetDriverByIdAsync(id, userLogin);
 
-                string status = driver == null
-                                ? Resources.Status_NotFound
-                                : Resources.Status_Success;
+                var status = driver == null
+                             ? Resources.Status_NotFound
+                             : Resources.Status_Success;
 
                 _logger.LogInformation($"{userLogin} - " + 
                                        $"{Resources.Operation_GetDriver} " +
@@ -139,10 +135,12 @@ namespace Services.Decorators.DriversServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_GetDriver} " +
-                                 $"({Id} {id}) - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null 
+                          ? $"{Resources.Operation_GetDriver} - {e.GetType()}" 
+                          : $"{userLogin} - {Resources.Operation_GetDriver} - {e.GetType()}";
+
+                _logger.LogError(log);
+
                 throw;
             }
         }
@@ -153,7 +151,7 @@ namespace Services.Decorators.DriversServiceDecorators
             {
                 if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
-                List<Driver> drivers = await _inner.GetAllDriversAsync(userLogin);
+                var drivers = await _inner.GetAllDriversAsync(userLogin);
 
                 _logger.LogInformation($"{userLogin} - " + 
                                        $"{Resources.Operation_GetAllDrivers} - " + 
@@ -163,9 +161,12 @@ namespace Services.Decorators.DriversServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_GetAllDrivers} - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null 
+                          ? $"{Resources.Operation_GetAllDrivers} - {e.GetType()}" 
+                          : $"{userLogin} - {Resources.Operation_GetAllDrivers} - {e.GetType()}";
+
+                _logger.LogError(log);
+
                 throw;
             }
         }
@@ -177,11 +178,11 @@ namespace Services.Decorators.DriversServiceDecorators
                 if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
                 if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
-                Driver driver = await _inner.RemoveDriverByIdAsync(id, userLogin);
+                var driver = await _inner.RemoveDriverByIdAsync(id, userLogin);
 
-                string status = driver == null
-                                ? Resources.Status_Fail
-                                : Resources.Status_Success;
+                var status = driver == null
+                             ? Resources.Status_Fail
+                             : Resources.Status_Success;
 
                 _logger.LogInformation($"{userLogin} - " + 
                                        $"{Resources.Operation_RemoveDriver} " +
@@ -192,10 +193,12 @@ namespace Services.Decorators.DriversServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_RemoveDriver} " +
-                                 $"({Id} {id}) - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null 
+                          ? $"{Resources.Operation_RemoveDriver} - {e.GetType()}" 
+                          : $"{userLogin} - {Resources.Operation_RemoveDriver} - {e.GetType()}";
+
+                _logger.LogError(log);
+
                 throw;
             }
         }

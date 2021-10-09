@@ -30,31 +30,21 @@ namespace Services.Decorators.UsersServiceDecorators
 
                 var userResponse = await _inner.AddUserAsync(userRequestModel, userLogin);
 
-                string status, addedUserId;
+                var log = userResponse == null
+                          ? $"{userLogin} - {Resources.Operation_AddUser} - {Resources.Status_Fail}"
+                          : $"{userLogin} - {Resources.Operation_AddUser} ({Id} {userResponse.Id}) - {Resources.Status_Success}";
 
-                if (userResponse == null)
-                {
-                    status = Resources.Status_Fail;
-                    addedUserId = "";
-                }
-                else
-                {
-                    status = Resources.Status_Success;
-                    addedUserId = $"{Id} {userResponse.Id}";
-                }
-
-                _logger.LogInformation($"{userLogin} - " +
-                                       $"{Resources.Operation_AddUser} " +
-                                       $"({addedUserId}) " +
-                                       $"- {status}");
+                _logger.LogInformation(log);
 
                 return userResponse;
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_AddUser} - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null
+                          ? $"{Resources.Operation_AddUser} - {e.GetType()}"
+                          : $"{userLogin} - {Resources.Operation_AddUser} - {e.GetType()}";
+
+                _logger.LogError(log);
 
                 throw;
             }
@@ -69,9 +59,9 @@ namespace Services.Decorators.UsersServiceDecorators
 
                 var userResponse = await _inner.UpdateUserAsync(userRequestModel, userLogin);
 
-                string status = userResponse == null
-                                ? Resources.Status_Fail
-                                : Resources.Status_Success;
+                var status = userResponse == null
+                             ? Resources.Status_Fail
+                             : Resources.Status_Success;
 
                 _logger.LogInformation($"{userLogin} - " +
                                        $"{Resources.Operation_UpdateUser} " +
@@ -82,9 +72,11 @@ namespace Services.Decorators.UsersServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_UpdateUser} - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null
+                          ? $"{Resources.Operation_UpdateUser} - {e.GetType()}"
+                          : $"{userLogin} - {Resources.Operation_UpdateUser} - {e.GetType()}";
+
+                _logger.LogError(log);
 
                 throw;
             }
@@ -99,9 +91,9 @@ namespace Services.Decorators.UsersServiceDecorators
 
                 var userResponse = await _inner.DeleteUserByIdAsync(id, userLogin);
 
-                string status = userResponse == null
-                                ? Resources.Status_Fail
-                                : Resources.Status_Success;
+                var status = userResponse == null
+                             ? Resources.Status_Fail
+                             : Resources.Status_Success;
 
                 _logger.LogInformation($"{userLogin} - " +
                                        $"{Resources.Operation_DeleteUser} " +
@@ -112,10 +104,11 @@ namespace Services.Decorators.UsersServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_DeleteUser} " +
-                                 $"({Id} {id}) - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null
+                          ? $"{Resources.Operation_DeleteUser} - {e.GetType()}"
+                          : $"{userLogin} - {Resources.Operation_DeleteUser} - {e.GetType()}";
+
+                _logger.LogError(log);
 
                 throw;
             }
@@ -136,9 +129,9 @@ namespace Services.Decorators.UsersServiceDecorators
 
                 var userResponse = await _inner.GetUserByLoginAsync(login, userLogin);
 
-                string status = userResponse == null
-                                ? Resources.Status_Fail
-                                : Resources.Status_Success;
+                var status = userResponse == null
+                             ? Resources.Status_Fail
+                             : Resources.Status_Success;
 
                 _logger.LogInformation($"{userLogin} - " +
                                        $"{Resources.Operation_GetUserByLogin} " +
@@ -149,9 +142,11 @@ namespace Services.Decorators.UsersServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_GetUserByLogin} - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null
+                          ? $"{Resources.Operation_GetUserByLogin} - {e.GetType()}"
+                          : $"{userLogin} - {Resources.Operation_GetUserByLogin} - {e.GetType()}";
+
+                _logger.LogError(log);
 
                 throw;
             }
@@ -165,9 +160,9 @@ namespace Services.Decorators.UsersServiceDecorators
 
                 var users = await _inner.GetAllUsersAsync(userLogin);
 
-                string status = users == null
-                                ? Resources.Status_Fail
-                                : Resources.Status_Success;
+                var status = users == null
+                             ? Resources.Status_Fail
+                             : Resources.Status_Success;
 
                 _logger.LogInformation($"{userLogin} - " +
                                        $"{Resources.Operation_GetAllUsers} - " +
@@ -177,9 +172,11 @@ namespace Services.Decorators.UsersServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_GetAllUsers} - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null
+                          ? $"{Resources.Operation_GetAllUsers} - {e.GetType()}"
+                          : $"{userLogin} - {Resources.Operation_GetAllUsers} - {e.GetType()}";
+
+                _logger.LogError(log);
 
                 throw;
             }
@@ -194,9 +191,9 @@ namespace Services.Decorators.UsersServiceDecorators
 
                 var userResponse = await _inner.RemoveUserByIdAsync(id, userLogin);
 
-                string status = userResponse == null
-                                ? Resources.Status_Fail
-                                : Resources.Status_Success;
+                var status = userResponse == null
+                             ? Resources.Status_Fail
+                             : Resources.Status_Success;
 
                 _logger.LogInformation($"{userLogin} - " +
                                        $"{Resources.Operation_RemoveUser} " +
@@ -207,10 +204,11 @@ namespace Services.Decorators.UsersServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_RemoveUser} " +
-                                 $"({Id} {id}) - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null
+                          ? $"{Resources.Operation_RemoveUser} - {e.GetType()}"
+                          : $"{userLogin} - {Resources.Operation_RemoveUser} - {e.GetType()}";
+
+                _logger.LogError(log);
 
                 throw;
             }

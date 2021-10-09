@@ -20,36 +20,6 @@ namespace Services.Decorators.CompaniesServiceDecorators
             _inner = inner ?? throw new ArgumentNullException(nameof(inner));
         }
 
-        public async Task<Company> GetCompanyByCompanyIdAsync(int companyId, string userLogin)
-        {
-            try
-            {
-                if (companyId <= 0) throw new ArgumentOutOfRangeException(nameof(companyId));
-                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
-
-                Company company = await _inner.GetCompanyByCompanyIdAsync(companyId, userLogin);
-
-                string status = company == null
-                                ? Resources.Status_NotFound
-                                : Resources.Status_Success;
-
-                _logger.LogInformation($"{userLogin} - " +
-                                       $"{Resources.Operation_GetCompanyByCompanyId} " +
-                                       $"({CompanyId} {companyId}) - " +
-                                       $"{status}");
-
-                return company;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_GetCompanyByCompanyId} " +
-                                 $"({CompanyId} {companyId}) - " +
-                                 $"{e.GetType()}");
-                throw;
-            }
-        }
-
         public async Task<Company> AddCompanyAsync(CompanyModel companyModel, string userLogin)
         {
             try
@@ -57,24 +27,26 @@ namespace Services.Decorators.CompaniesServiceDecorators
                 if (companyModel == null) throw new ArgumentNullException(nameof(companyModel));
                 if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
-                Company company = await _inner.AddCompanyAsync(companyModel, userLogin);
+                var company = await _inner.AddCompanyAsync(companyModel, userLogin);
 
-                string status = company == null 
-                                ? Resources.Status_Fail 
-                                : Resources.Status_Success;
+                var log = company == null
+                          ? $"{userLogin} - {Resources.Operation_AddCompany} - {Resources.Status_Fail}"
+                          : $"{userLogin} - " +
+                            $"{Resources.Operation_AddCompany} ({CompanyId} {company.CompanyId}) - " +
+                            $"{Resources.Status_Success}";
 
-                _logger.LogInformation($"{userLogin} - " +
-                                       $"{Resources.Operation_AddCompany} " +
-                                       $"({CompanyId} {companyModel.CompanyId}) - " + 
-                                       $"{status}");
+                _logger.LogInformation(log);
 
                 return company;
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_AddCompany} - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null
+                    ? $"{Resources.Operation_AddCompany} - {e.GetType()}"
+                    : $"{userLogin} - {Resources.Operation_AddCompany} - {e.GetType()}";
+
+                _logger.LogError(log);
+
                 throw;
             }
         }
@@ -86,11 +58,11 @@ namespace Services.Decorators.CompaniesServiceDecorators
                 if (companyModel == null) throw new ArgumentNullException(nameof(companyModel));
                 if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
-                Company company = await _inner.UpdateCompanyAsync(companyModel, userLogin);
+                var company = await _inner.UpdateCompanyAsync(companyModel, userLogin);
 
-                string status = company == null
-                                ? Resources.Status_Fail
-                                : Resources.Status_Success;
+                var status = company == null
+                             ? Resources.Status_Fail
+                             : Resources.Status_Success;
 
                 _logger.LogInformation($"{userLogin} - " +
                                        $"{Resources.Operation_UpdateCompany} " +
@@ -101,9 +73,11 @@ namespace Services.Decorators.CompaniesServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_UpdateCompany} - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null 
+                          ? $"{Resources.Operation_UpdateCompany} - {e.GetType()}" 
+                          : $"{userLogin} - {Resources.Operation_UpdateCompany} - {e.GetType()}";
+
+                _logger.LogError(log);
 
                 throw;
             }
@@ -116,11 +90,11 @@ namespace Services.Decorators.CompaniesServiceDecorators
                 if (companyId <= 0) throw new ArgumentOutOfRangeException(nameof(companyId));
                 if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
-                Company company = await _inner.DeleteCompanyByCompanyIdAsync(companyId, userLogin);
+                var company = await _inner.DeleteCompanyByCompanyIdAsync(companyId, userLogin);
 
-                string status = company == null 
-                                ? Resources.Status_Fail 
-                                : Resources.Status_Success;
+                var status = company == null 
+                             ? Resources.Status_Fail 
+                             : Resources.Status_Success;
 
                 _logger.LogInformation($"{userLogin} - " +
                                        $"{Resources.Operation_DeleteCompanyByCompanyId} " +
@@ -131,10 +105,43 @@ namespace Services.Decorators.CompaniesServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_DeleteCompanyByCompanyId} " +
-                                 $"({CompanyId} {companyId}) - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null 
+                          ? $"{Resources.Operation_DeleteCompanyByCompanyId} - {e.GetType()}" 
+                          : $"{userLogin} - {Resources.Operation_DeleteCompanyByCompanyId} - {e.GetType()}";
+
+                _logger.LogError(log);
+
+                throw;
+            }
+        }
+
+        public async Task<Company> GetCompanyByCompanyIdAsync(int companyId, string userLogin)
+        {
+            try
+            {
+                if (companyId <= 0) throw new ArgumentOutOfRangeException(nameof(companyId));
+                if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
+
+                var company = await _inner.GetCompanyByCompanyIdAsync(companyId, userLogin);
+
+                var status = company == null
+                             ? Resources.Status_NotFound
+                             : Resources.Status_Success;
+
+                _logger.LogInformation($"{userLogin} - " +
+                                       $"{Resources.Operation_GetCompanyByCompanyId} " +
+                                       $"({CompanyId} {companyId}) - " +
+                                       $"{status}");
+
+                return company;
+            }
+            catch (Exception e)
+            {
+                var log = userLogin == null
+                          ? $"{Resources.Operation_GetCompanyByCompanyId} - {e.GetType()}"
+                          : $"{userLogin} - {Resources.Operation_GetCompanyByCompanyId} - {e.GetType()}";
+
+                _logger.LogError(log);
 
                 throw;
             }
@@ -146,7 +153,7 @@ namespace Services.Decorators.CompaniesServiceDecorators
             {
                 if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
-                List<Company> companies = await _inner.GetAllCompaniesAsync(userLogin);
+                var companies = await _inner.GetAllCompaniesAsync(userLogin);
 
                 _logger.LogInformation($"{userLogin} - " +
                                        $"{Resources.Operation_GetAllCompanies} - " +
@@ -156,9 +163,12 @@ namespace Services.Decorators.CompaniesServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_GetAllCompanies} - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null 
+                          ? $"{Resources.Operation_GetAllCompanies} - {e.GetType()}" 
+                          : $"{userLogin} - {Resources.Operation_GetAllCompanies} - {e.GetType()}";
+
+                _logger.LogError(log);
+
                 throw;
             }
         }
@@ -170,11 +180,11 @@ namespace Services.Decorators.CompaniesServiceDecorators
                 if (companyId <= 0) throw new ArgumentOutOfRangeException(nameof(companyId));
                 if (userLogin == null) throw new ArgumentNullException(nameof(userLogin));
 
-                Company company = await _inner.RemoveCompanyByCompanyIdAsync(companyId, userLogin);
+                var company = await _inner.RemoveCompanyByCompanyIdAsync(companyId, userLogin);
 
-                string status = company == null
-                                ? Resources.Status_Fail
-                                : Resources.Status_Success;
+                var status = company == null
+                             ? Resources.Status_Fail
+                             : Resources.Status_Success;
 
                 _logger.LogInformation($"{userLogin} - " +
                                        $"{Resources.Operation_RemoveCompanyByCompanyId} " +
@@ -185,10 +195,11 @@ namespace Services.Decorators.CompaniesServiceDecorators
             }
             catch (Exception e)
             {
-                _logger.LogError($"{userLogin} - " +
-                                 $"{Resources.Operation_RemoveCompanyByCompanyId} " +
-                                 $"({CompanyId} {companyId}) - " +
-                                 $"{e.GetType()}");
+                var log = userLogin == null 
+                          ? $"{Resources.Operation_RemoveCompanyByCompanyId} - {e.GetType()}" 
+                          : $"{userLogin} - {Resources.Operation_RemoveCompanyByCompanyId} - {e.GetType()}";
+
+                _logger.LogError(log);
 
                 throw;
             }
