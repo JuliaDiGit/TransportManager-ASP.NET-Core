@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Authorization.Helpers;
 using AutoMapper;
 using Data.Repositories.Abstract;
 using Domain;
 using Models;
 using Services.Abstract;
-using Services.Helpers;
 
 namespace Services
 {

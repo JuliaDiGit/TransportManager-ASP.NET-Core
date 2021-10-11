@@ -1,9 +1,11 @@
-﻿using Data.Repositories;
+﻿using Authorization;
+using Authorization.Abstract;
+using Authorization.AuthorizationServiceDecorators;
+using Data.Repositories;
 using Data.Repositories.Abstract;
 using Microsoft.Extensions.DependencyInjection;
 using Services;
 using Services.Abstract;
-using Services.Decorators.AuthorizationServiceDecorators;
 using Services.Decorators.CompaniesServiceDecorators;
 using Services.Decorators.DriversServiceDecorators;
 using Services.Decorators.UsersServiceDecorators;

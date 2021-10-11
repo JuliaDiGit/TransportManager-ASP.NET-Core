@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Domain.Authorization;
+using Authorization.Abstract;
+using Authorization.DTO;
 using Microsoft.Extensions.Logging;
 using Models.Authorization;
-using Services.Abstract;
 
-namespace Services.Decorators.AuthorizationServiceDecorators
+namespace Authorization.AuthorizationServiceDecorators
 {
     public class AuthorizationServiceLoggerDecorator : IAuthorizationService
     {

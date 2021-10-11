@@ -1,4 +1,4 @@
-﻿namespace Domain.Authorization
+﻿namespace Authorization.DTO
 {
     public class UserAuthenticateRequest
     {

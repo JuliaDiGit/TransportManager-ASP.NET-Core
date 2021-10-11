@@ -1,6 +1,6 @@
 ﻿using Enums;
 
-namespace Domain.Authorization
+namespace Authorization.DTO
 {
     public class UserRegistrationRequest
     {

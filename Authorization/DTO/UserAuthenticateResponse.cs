@@ -1,7 +1,7 @@
 ﻿using System;
 using Enums;
 
-namespace Domain.Authorization
+namespace Authorization.DTO
 {
     public class UserAuthenticateResponse
     {

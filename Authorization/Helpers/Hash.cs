@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
-namespace Services.Helpers
+namespace Authorization.Helpers
 {
     /// <summary>
     ///     Класс Hash используется для хеширования строк

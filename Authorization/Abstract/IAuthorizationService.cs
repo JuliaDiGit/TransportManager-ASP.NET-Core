@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using Domain.Authorization;
+using Authorization.DTO;
 using Models.Authorization;
 
-namespace Services.Abstract
+namespace Authorization.Abstract
 {
     public interface IAuthorizationService
     {

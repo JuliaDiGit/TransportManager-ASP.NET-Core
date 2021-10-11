@@ -2,11 +2,11 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Authorization.DTO;
 using Microsoft.Extensions.Configuration;
-using Domain.Authorization;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Services.Authenticate
+namespace Authorization
 {
     /// <summary>
     ///     GenerateJwtToken используется для создания JWT токена

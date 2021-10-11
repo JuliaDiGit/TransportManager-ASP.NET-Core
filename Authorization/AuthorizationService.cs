@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Authorization.Abstract;
+using Authorization.DTO;
+using Authorization.Helpers;
 using AutoMapper;
 using Data.Repositories.Abstract;
 using Domain;
-using Domain.Authorization;
 using Enums;
 using Microsoft.Extensions.Configuration;
 using Models.Authorization;
-using Services.Abstract;
-using Services.Authenticate;
-using Services.Helpers;
 
-namespace Services
+namespace Authorization
 {
     public class AuthorizationService : IAuthorizationService
     {

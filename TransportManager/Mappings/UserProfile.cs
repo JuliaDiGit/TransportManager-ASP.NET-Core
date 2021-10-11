@@ -1,6 +1,6 @@
-﻿using AutoMapper;
+﻿using Authorization.DTO;
+using AutoMapper;
 using Domain;
-using Domain.Authorization;
 using Entities;
 using Models;
 using Models.Authorization;

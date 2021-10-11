@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Text;
 using System.Threading.Tasks;
+using Authorization.Abstract;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Models.Authorization;
 using Models.Validation;
-using Services.Abstract;
 
 namespace TransportManager.Controllers
 {
@@ -49,7 +48,7 @@ namespace TransportManager.Controllers
             }
             catch (Exception e)
             {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы БД");
+                if (e is Npgsql.PostgresException) return StatusCode(500, "Ошибка работы БД");
                 return BadRequest(e.Message);
             }
         }
@@ -75,7 +74,7 @@ namespace TransportManager.Controllers
             }
             catch (Exception e)
             {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы БД");
+                if (e is Npgsql.PostgresException) return StatusCode(500, "Ошибка работы БД"); 
                 return BadRequest(e.Message);
             }
         }
