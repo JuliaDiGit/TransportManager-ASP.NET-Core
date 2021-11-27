@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Domain;
-using Entities;
-using Models;
+using TransportManager.Domain;
+using TransportManager.Entities;
+using TransportManager.Models;
 
 namespace TransportManager.Mappings
 {

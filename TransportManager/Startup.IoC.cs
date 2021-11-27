@@ -1,16 +1,16 @@
-﻿using Authorization;
-using Authorization.Abstract;
-using Authorization.AuthorizationServiceDecorators;
-using Data.Repositories;
-using Data.Repositories.Abstract;
+﻿using TransportManager.Authorization;
+using TransportManager.Authorization.Abstract;
+using TransportManager.Authorization.AuthorizationServiceDecorators;
+using TransportManager.Data.Repositories;
+using TransportManager.Data.Repositories.Abstract;
 using Microsoft.Extensions.DependencyInjection;
-using Services;
-using Services.Abstract;
-using Services.Decorators.CompaniesServiceDecorators;
-using Services.Decorators.DriversServiceDecorators;
-using Services.Decorators.UsersServiceDecorators;
-using Services.Decorators.VehiclesServiceDecorators;
 using TransportManager.Helpers;
+using TransportManager.Services;
+using TransportManager.Services.Abstract;
+using TransportManager.Services.Decorators.CompaniesServiceDecorators;
+using TransportManager.Services.Decorators.DriversServiceDecorators;
+using TransportManager.Services.Decorators.UsersServiceDecorators;
+using TransportManager.Services.Decorators.VehiclesServiceDecorators;
 
 namespace TransportManager
 {

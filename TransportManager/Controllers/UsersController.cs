@@ -4,8 +4,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Models;
-using Services.Abstract;
+using TransportManager.Common.Exceptions;
+using TransportManager.Models;
+using TransportManager.Services.Abstract;
 
 namespace TransportManager.Controllers
 {
@@ -35,25 +36,17 @@ namespace TransportManager.Controllers
         [Route("")]
         public async Task<IActionResult> GetUserByLoginAsync(string login)
         {
-            try
-            {
-                if (login == null) throw new ArgumentNullException(nameof(login));
+            if (login == null) throw new ArgumentNullException(nameof(login));
 
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var userResponse = await _usersService.GetUserByLoginAsync(login, userLogin);
+            var userResponse = await _usersService.GetUserByLoginAsync(login, userLogin);
 
-                if (userResponse == null) return NotFound();
+            if (userResponse == null) return NoContent();
 
-                var userModel = _mapper.Map<UserResponseModel>(userResponse);
+            var userModel = _mapper.Map<UserResponseModel>(userResponse);
 
-                return Ok(userModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы с БД");
-                return BadRequest(e.Message);
-            }
+            return Ok(userModel);
         }
 
         /// <summary>
@@ -66,22 +59,19 @@ namespace TransportManager.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddUserAsync(UserRequestModel userRequestModel)
         {
-            try
-            {
-                if (userRequestModel == null) throw new ArgumentNullException(nameof(userRequestModel));
+            if (userRequestModel == null) throw new ArgumentNullException(nameof(userRequestModel));
+            if (userRequestModel.Id != 0) throw new UserErrorException(Resources.Error_IdAssignment);
+            if (userRequestModel.IsDeleted) throw new UserErrorException(Resources.Error_IsDeletedTrue);
+            if (userRequestModel.SoftDeletedDate != null) 
+                throw new UserErrorException(Resources.Error_SoftDeletedDateAssignment);
 
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var userResponse = await _usersService.AddUserAsync(userRequestModel, userLogin);
-                var addedUserModel = _mapper.Map<UserResponseModel>(userResponse);
+            var userResponse = await _usersService.AddUserAsync(userRequestModel, userLogin);
 
-                return Ok(addedUserModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы с БД");
-                return BadRequest(e.Message);
-            }
+            var addedUserModel = _mapper.Map<UserResponseModel>(userResponse);
+
+            return Ok(addedUserModel.Id);
         }
 
         /// <summary>
@@ -94,56 +84,44 @@ namespace TransportManager.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateUserAsync(UserRequestModel userRequestModel)
         {
-            try
-            {
-                if (userRequestModel == null) throw new ArgumentNullException(nameof(userRequestModel));
+            if (userRequestModel == null) throw new ArgumentNullException(nameof(userRequestModel));
+            if (userRequestModel.IsDeleted) throw new UserErrorException(Resources.Error_IsDeletedTrue);
+            if (userRequestModel.SoftDeletedDate != null)
+                throw new UserErrorException(Resources.Error_SoftDeletedDateAssignment);
 
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var updUserResponse = await _usersService.UpdateUserAsync(userRequestModel, userLogin);
+            var updUserResponse = await _usersService.UpdateUserAsync(userRequestModel, userLogin);
 
-                if (updUserResponse == null) return NotFound();
+            if (updUserResponse == null) return NoContent();
 
-                var updUserModel = _mapper.Map<UserResponseModel>(updUserResponse);
+            var updUserModel = _mapper.Map<UserResponseModel>(updUserResponse);
 
-                return Ok(updUserModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы с БД");
-                return BadRequest(e.Message);
-            }
+            return Ok(updUserModel.Id);
         }
 
         /// <summary>
         ///     Удалить пользователя
         /// </summary>
-        /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete]
         [Route("")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteUserAsync(int id)
+        public async Task<IActionResult> DeleteUserByLoginAsync(string login)
         {
-            try
-            {
-                if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+            if (login == null) throw new ArgumentNullException(nameof(login));
 
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var userResponse = await _usersService.DeleteUserByIdAsync(id, userLogin);
+            if (login == userLogin) throw new UserErrorException(Resources.Error_CurrentAcc);
 
-                if (userResponse == null) return NotFound();
+            var userResponse = await _usersService.DeleteUserByLoginAsync(login, userLogin);
 
-                var userModel = _mapper.Map<UserResponseModel>(userResponse);
+            if (userResponse == null) return NoContent();
 
-                return Ok(userModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы с БД");
-                return BadRequest(e.Message);
-            }
+            var userModel = _mapper.Map<UserResponseModel>(userResponse);
+
+            return Ok(userModel.Id);
         }
 
         /// <summary>
@@ -154,24 +132,16 @@ namespace TransportManager.Controllers
         [Route("get_all")]
         public async Task<IActionResult> GetAllUsersAsync()
         {
-            try
-            {
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var users = await _usersService.GetAllUsersAsync(userLogin);
+            var users = await _usersService.GetAllUsersAsync(userLogin);
 
-                if (users == null) return NotFound();
+            if (users == null || users.Count == 0) return NoContent();
 
-                var usersModels = users.Select(user => _mapper.Map<UserResponseModel>(user))
-                                       .ToList();
+            var usersModels = users.Select(user => _mapper.Map<UserResponseModel>(user))
+                                   .ToList();
 
-                return Ok(usersModels);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы с БД");
-                return BadRequest(e.Message);
-            }
+            return Ok(usersModels);
         }
 
         /// <summary>
@@ -181,27 +151,21 @@ namespace TransportManager.Controllers
         [HttpPut]
         [Route("remove")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> RemoveUserByIdAsync(int id)
+        public async Task<IActionResult> RemoveUserByLoginAsync(string login)
         {
-            try
-            {
-                if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+            if (login == null) throw new ArgumentNullException(nameof(login));
 
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var userResponse = await _usersService.RemoveUserByIdAsync(id, userLogin);
+            if (login == userLogin) throw new UserErrorException(Resources.Error_CurrentAcc);
 
-                if (userResponse == null) return NotFound();
+            var userResponse = await _usersService.RemoveUserByLoginAsync(login, userLogin);
 
-                var userModel = _mapper.Map<UserResponseModel>(userResponse);
+            if (userResponse == null) return NoContent();
 
-                return Ok(userModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы с БД");
-                return BadRequest(e.Message);
-            }
+            var userModel = _mapper.Map<UserResponseModel>(userResponse);
+
+            return Ok(userModel.Id);
         }
     }
 }

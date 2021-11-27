@@ -5,19 +5,19 @@ VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransportManager", "TransportManager\TransportManager.csproj", "{62055293-0194-4987-88FA-1AD80878C316}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data\Data.csproj", "{2D350F31-CD59-4D47-AE17-91EA0095FF58}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransportManager.Data", "TransportManager.Data\TransportManager.Data.csproj", "{2D350F31-CD59-4D47-AE17-91EA0095FF58}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entities", "Entities\Entities.csproj", "{156480C6-11B1-4234-8DB4-B0831F5F878E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransportManager.Entities", "TransportManager.Entities\TransportManager.Entities.csproj", "{156480C6-11B1-4234-8DB4-B0831F5F878E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{8675FCA7-B20F-4B35-89C5-1659294F369A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransportManager.Services", "TransportManager.Services\TransportManager.Services.csproj", "{8675FCA7-B20F-4B35-89C5-1659294F369A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{DA576B82-09DD-4137-90AF-906C51EB5F1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransportManager.Domain", "TransportManager.Domain\TransportManager.Domain.csproj", "{DA576B82-09DD-4137-90AF-906C51EB5F1A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enums", "Enums\Enums.csproj", "{60B2722E-508F-45E4-B663-00FC2DCF170F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransportManager.Models", "TransportManager.Models\TransportManager.Models.csproj", "{94955150-4844-4785-860D-4F83C52609A4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csproj", "{94955150-4844-4785-860D-4F83C52609A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransportManager.Authorization", "TransportManager.Authorization\TransportManager.Authorization.csproj", "{14E356C4-335E-49A0-B53B-354DA370B381}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authorization", "Authorization\Authorization.csproj", "{14E356C4-335E-49A0-B53B-354DA370B381}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransportManager.Common", "TransportManager.Common\TransportManager.Common.csproj", "{458E9031-195A-4798-AAB7-4C77523ABF0F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,10 +45,6 @@ Global
 		{DA576B82-09DD-4137-90AF-906C51EB5F1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA576B82-09DD-4137-90AF-906C51EB5F1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA576B82-09DD-4137-90AF-906C51EB5F1A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{60B2722E-508F-45E4-B663-00FC2DCF170F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{60B2722E-508F-45E4-B663-00FC2DCF170F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{60B2722E-508F-45E4-B663-00FC2DCF170F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{60B2722E-508F-45E4-B663-00FC2DCF170F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{94955150-4844-4785-860D-4F83C52609A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{94955150-4844-4785-860D-4F83C52609A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94955150-4844-4785-860D-4F83C52609A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -57,6 +53,10 @@ Global
 		{14E356C4-335E-49A0-B53B-354DA370B381}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14E356C4-335E-49A0-B53B-354DA370B381}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14E356C4-335E-49A0-B53B-354DA370B381}.Release|Any CPU.Build.0 = Release|Any CPU
+		{458E9031-195A-4798-AAB7-4C77523ABF0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{458E9031-195A-4798-AAB7-4C77523ABF0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{458E9031-195A-4798-AAB7-4C77523ABF0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{458E9031-195A-4798-AAB7-4C77523ABF0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

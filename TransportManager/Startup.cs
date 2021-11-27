@@ -6,7 +6,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using Data;
+using TransportManager.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
@@ -95,6 +95,8 @@ namespace TransportManager
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
 
             app.UseSwagger();
             app.UseSwaggerUI(options =>

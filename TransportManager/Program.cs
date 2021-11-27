@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System;
-using Data;
+using TransportManager.Data;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
@@ -34,7 +34,7 @@ namespace TransportManager
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .UseSerilog((hostingContext, loggerConfig) => 
-                    loggerConfig.ReadFrom.Configuration(hostingContext.Configuration)) // используем настройки через appsettings.json
+                    loggerConfig.ReadFrom.Configuration(hostingContext.Configuration)) // РёСЃРїРѕР»СЊР·СѓРµРј РЅР°СЃС‚СЂРѕР№РєРё С‡РµСЂРµР· appsettings.json
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
@@ -51,8 +51,8 @@ namespace TransportManager
             }
             catch (Exception e)
             {
-                // при возникновении ошибки до подключения к БД используется некорректная кодировка,
-                // поэтому данная ошибка переписана вручную
+                // РїСЂРё РІРѕР·РЅРёРєРЅРѕРІРµРЅРёРё РѕС€РёР±РєРё РґРѕ РїРѕРґРєР»СЋС‡РµРЅРёСЏ Рє Р‘Р” РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РЅРµРєРѕСЂСЂРµРєС‚РЅР°СЏ РєРѕРґРёСЂРѕРІРєР°,
+                // РїРѕСЌС‚РѕРјСѓ РґР°РЅРЅР°СЏ РѕС€РёР±РєР° РїРµСЂРµРїРёСЃР°РЅР° РІСЂСѓС‡РЅСѓСЋ
                 Log.Error(e.Message.Contains("28P01:")
                           ? "An error occurred creating the DB - 28P01: invalid_password"
                           : $"An error occurred creating the DB - {e.Message}");

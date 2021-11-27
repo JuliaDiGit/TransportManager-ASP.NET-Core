@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Authorization.Abstract;
+using TransportManager.Authorization.Abstract;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Models.Authorization;
-using Models.Validation;
+using TransportManager.Models.Authorization;
 
 namespace TransportManager.Controllers
 {
@@ -33,24 +32,16 @@ namespace TransportManager.Controllers
         [Route("register")]
         public async Task<IActionResult> Register(UserRegistrationRequestModel userRegistrationRequestModel)
         {
-            try
-            {
-                if (userRegistrationRequestModel == null)
-                    throw new ArgumentNullException(nameof(userRegistrationRequestModel));
+            if (userRegistrationRequestModel == null)
+                throw new ArgumentNullException(nameof(userRegistrationRequestModel));
 
-                ValidationFilter.Validate(userRegistrationRequestModel);
+            var userResponse = await _authorizationService.Register(userRegistrationRequestModel);
 
-                var userResponse = await _authorizationService.Register(userRegistrationRequestModel);
+            if (userResponse == null) return NoContent();
 
-                var userResponseModel = _mapper.Map<UserAuthenticateResponseModel>(userResponse);
+            var userResponseModel = _mapper.Map<UserAuthenticateResponseModel>(userResponse);
 
-                return Ok(userResponseModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return StatusCode(500, "Ошибка работы БД");
-                return BadRequest(e.Message);
-            }
+            return Ok(userResponseModel);
         }
 
         /// <summary>
@@ -61,22 +52,16 @@ namespace TransportManager.Controllers
         [Route("login")]
         public async Task<IActionResult> Login(UserAuthenticateRequestModel userAuthenticateRequestModel)
         {
-            try
-            {
-                if (userAuthenticateRequestModel == null)
-                    throw new ArgumentNullException(nameof(userAuthenticateRequestModel));
+            if (userAuthenticateRequestModel == null)
+                throw new ArgumentNullException(nameof(userAuthenticateRequestModel));
 
-                var userResponse = await _authorizationService.Login(userAuthenticateRequestModel);
+            var userResponse = await _authorizationService.Login(userAuthenticateRequestModel);
 
-                var userResponseModel = _mapper.Map<UserAuthenticateResponseModel>(userResponse);
+            if (userResponse == null) return Ok("Incorrect username or password");
 
-                return Ok(userResponseModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return StatusCode(500, "Ошибка работы БД"); 
-                return BadRequest(e.Message);
-            }
+            var userResponseModel = _mapper.Map<UserAuthenticateResponseModel>(userResponse);
+
+            return Ok(userResponseModel);
         }
     }
 }

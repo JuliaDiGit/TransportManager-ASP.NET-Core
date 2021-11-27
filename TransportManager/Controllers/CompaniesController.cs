@@ -4,8 +4,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Models;
-using Services.Abstract;
+using TransportManager.Common.Exceptions;
+using TransportManager.Models;
+using TransportManager.Services.Abstract;
 
 namespace TransportManager.Controllers
 {
@@ -35,25 +36,17 @@ namespace TransportManager.Controllers
         [Route("")]
         public async Task<IActionResult> GetCompanyByCompanyIdAsync(int companyId)
         {
-            try
-            {
-                if (companyId <= 0) throw new ArgumentOutOfRangeException(nameof(companyId));
+            if (companyId <= 0) throw new UserErrorException(Resources.Error_IncorrectCompanyId);
 
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var company = await _companiesService.GetCompanyByCompanyIdAsync(companyId, userLogin);
+            var company = await _companiesService.GetCompanyByCompanyIdAsync(companyId, userLogin);
 
-                if (company == null || company.IsDeleted) return NotFound();
+            if (company == null || company.IsDeleted) return NoContent();
 
-                var companyModel = _mapper.Map<CompanyModel>(company);
+            var companyModel = _mapper.Map<CompanyModel>(company);
 
-                return Ok(companyModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы БД");
-                return BadRequest(e.Message);
-            }
+            return Ok(companyModel);
         }
 
         /// <summary>
@@ -66,25 +59,21 @@ namespace TransportManager.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddCompanyAsync(CompanyModel companyModel)
         {
-            try
-            {
-                if (companyModel == null) throw new ArgumentNullException(nameof(companyModel));
+            if (companyModel == null) throw new ArgumentNullException(nameof(companyModel));
+            if (companyModel.Id != 0) throw new UserErrorException(Resources.Error_IdAssignment);
+            if (companyModel.IsDeleted) throw new UserErrorException(Resources.Error_IsDeletedTrue);
+            if (companyModel.SoftDeletedDate != null) 
+                throw new UserErrorException(Resources.Error_SoftDeletedDateAssignment);
 
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var company = await _companiesService.AddCompanyAsync(companyModel, userLogin);
+            var company = await _companiesService.AddCompanyAsync(companyModel, userLogin);
 
-                if (company == null) return NotFound();
+            if (company == null) return NoContent();
 
-                var addedCompanyModel = _mapper.Map<CompanyModel>(company);
+            var addedCompanyModel = _mapper.Map<CompanyModel>(company);
 
-                return Ok(addedCompanyModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы БД");
-                return BadRequest(e.Message);
-            }
+            return Ok(addedCompanyModel.CompanyId);
         }
 
         /// <summary>
@@ -95,27 +84,23 @@ namespace TransportManager.Controllers
         [HttpPut]
         [Route("")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateDriverAsync(CompanyModel companyModel)
+        public async Task<IActionResult> UpdateCompanyAsync(CompanyModel companyModel)
         {
-            try
-            {
-                if (companyModel == null) throw new ArgumentNullException(nameof(companyModel));
+            if (companyModel == null) throw new ArgumentNullException(nameof(companyModel));
+            if (companyModel.CompanyId <= 0) throw new UserErrorException(Resources.Error_IncorrectCompanyId);
+            if (companyModel.IsDeleted) throw new UserErrorException(Resources.Error_IsDeletedTrue);
+            if (companyModel.SoftDeletedDate != null) 
+                throw new UserErrorException(Resources.Error_SoftDeletedDateAssignment);
 
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var updCompany = await _companiesService.UpdateCompanyAsync(companyModel, userLogin);
+            var updCompany = await _companiesService.UpdateCompanyAsync(companyModel, userLogin);
 
-                if (updCompany == null) return NotFound();
+            if (updCompany == null) return NoContent();
 
-                var updCompanyModel = _mapper.Map<CompanyModel>(updCompany);
+            var updCompanyModel = _mapper.Map<CompanyModel>(updCompany);
 
-                return Ok(updCompanyModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы БД");
-                return BadRequest(e.Message);
-            }
+            return Ok(updCompanyModel.CompanyId);
         }
 
         /// <summary>
@@ -128,25 +113,17 @@ namespace TransportManager.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteCompanyByCompanyIdAsync(int companyId)
         {
-            try
-            {
-                if (companyId <= 0) throw new ArgumentOutOfRangeException(nameof(companyId));
+            if (companyId <= 0) throw new UserErrorException(Resources.Error_IncorrectCompanyId);
 
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var company = await _companiesService.DeleteCompanyByCompanyIdAsync(companyId, userLogin);
+            var company = await _companiesService.DeleteCompanyByCompanyIdAsync(companyId, userLogin);
 
-                if (company == null) return NotFound();
+            if (company == null) return NoContent();
 
-                var companyModel = _mapper.Map<CompanyModel>(company);
+            var companyModel = _mapper.Map<CompanyModel>(company);
 
-                return Ok(companyModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы БД");
-                return BadRequest(e.Message);
-            }
+            return Ok(companyModel.CompanyId);
         }
 
         /// <summary>
@@ -158,24 +135,16 @@ namespace TransportManager.Controllers
         [Route("get_all")]
         public async Task<IActionResult> GetAllCompaniesAsync()
         {
-            try
-            {
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var companies = await _companiesService.GetAllCompaniesAsync(userLogin);
+            var companies = await _companiesService.GetAllCompaniesAsync(userLogin);
 
-                if (companies == null) return NotFound();
+            if (companies == null || companies.Count == 0) return NoContent();
 
-                var companyModels = companies.Select(c => _mapper.Map<CompanyModel>(c))
-                                             .ToList();
+            var companyModels = companies.Select(c => _mapper.Map<CompanyModel>(c))
+                                         .ToList();
 
-                return Ok(companyModels);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы БД");
-                return BadRequest(e.Message);
-            }
+            return Ok(companyModels);
         }
 
         /// <summary>
@@ -188,25 +157,17 @@ namespace TransportManager.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoveCompanyByCompanyIdAsync(int companyId)
         {
-            try
-            {
-                if (companyId <= 0) throw new ArgumentOutOfRangeException(nameof(companyId));
+            if (companyId <= 0) throw new UserErrorException(Resources.Error_IncorrectCompanyId);
 
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var company = await _companiesService.RemoveCompanyByCompanyIdAsync(companyId, userLogin);
+            var company = await _companiesService.RemoveCompanyByCompanyIdAsync(companyId, userLogin);
 
-                if (company == null) return NotFound();
+            if (company == null) return NoContent();
 
-                var companyModel = _mapper.Map<CompanyModel>(company);
+            var companyModel = _mapper.Map<CompanyModel>(company);
 
-                return Ok(companyModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы БД");
-                return BadRequest(e.Message);
-            }
+            return Ok(companyModel.CompanyId);
         }
     }
 }

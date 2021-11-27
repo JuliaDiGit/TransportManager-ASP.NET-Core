@@ -4,8 +4,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Models;
-using Services.Abstract;
+using TransportManager.Common.Exceptions;
+using TransportManager.Models;
+using TransportManager.Services.Abstract;
 
 namespace TransportManager.Controllers
 {
@@ -33,27 +34,20 @@ namespace TransportManager.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> GetDriverByIdAsync(int id)
+        public async Task<IActionResult> GetDriverAsync(int id)
         {
-            try
-            {
-                if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
 
-                var userLogin = HttpContext.User.Identity.Name;
+            if (id <= 0) throw new UserErrorException(Resources.Error_IncorrectId);
 
-                var driver = await _driversService.GetDriverByIdAsync(id, userLogin);
+            var userLogin = HttpContext.User.Identity.Name;
 
-                if (driver == null) return NotFound();
+            var driver = await _driversService.GetDriverAsync(id, userLogin);
 
-                var driverModel = _mapper.Map<DriverModel>(driver);
+            if (driver == null) return NoContent();
 
-                return Ok(driverModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы БД");
-                return BadRequest(e.Message);
-            }
+            var driverModel = _mapper.Map<DriverModel>(driver);
+
+            return Ok(driverModel);
         }
 
         /// <summary>
@@ -66,22 +60,18 @@ namespace TransportManager.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddDriverAsync(DriverModel driverModel)
         {
-            try
-            {
-                if (driverModel == null) throw new ArgumentNullException(nameof(driverModel));
+            if (driverModel == null) throw new ArgumentNullException(nameof(driverModel));
+            if (driverModel.Id != 0) throw new UserErrorException(Resources.Error_IdAssignment);
+            if (driverModel.IsDeleted) throw new UserErrorException(Resources.Error_IsDeletedTrue);
+            if (driverModel.SoftDeletedDate != null) 
+                throw new UserErrorException(Resources.Error_SoftDeletedDateAssignment);
 
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var driver = await _driversService.AddDriverAsync(driverModel, userLogin);
-                var addedDriverModel = _mapper.Map<DriverModel>(driver);
+            var driver = await _driversService.AddDriverAsync(driverModel, userLogin);
+            var addedDriverModel = _mapper.Map<DriverModel>(driver);
 
-                return Ok(addedDriverModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы БД");
-                return BadRequest(e.Message);
-            }
+            return Ok(addedDriverModel.Id);
         }
 
         /// <summary>
@@ -94,25 +84,21 @@ namespace TransportManager.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateDriverAsync(DriverModel driverModel)
         {
-            try
-            {
-                if (driverModel == null) throw new ArgumentNullException(nameof(driverModel));
+            if (driverModel == null) throw new ArgumentNullException(nameof(driverModel));
+            if (driverModel.Id <= 0) throw new UserErrorException(Resources.Error_IncorrectId);
+            if (driverModel.IsDeleted) throw new UserErrorException(Resources.Error_IsDeletedTrue);
+            if (driverModel.SoftDeletedDate != null) 
+                throw new UserErrorException(Resources.Error_SoftDeletedDateAssignment);
 
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var updDriver = await _driversService.UpdateDriverAsync(driverModel, userLogin);
+            var updDriver = await _driversService.UpdateDriverAsync(driverModel, userLogin);
 
-                if (updDriver == null) return NotFound();
+            if (updDriver == null) return NoContent();
 
-                var updDriverModel = _mapper.Map<DriverModel>(updDriver);
+            var updDriverModel = _mapper.Map<DriverModel>(updDriver);
 
-                return Ok(updDriverModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы БД");
-                return BadRequest(e.Message);
-            }
+            return Ok(updDriverModel.Id);
         }
 
         /// <summary>
@@ -123,27 +109,19 @@ namespace TransportManager.Controllers
         [HttpDelete]
         [Route("")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteDriverByIdAsync(int id)
+        public async Task<IActionResult> DeleteDriverAsync(int id)
         {
-            try
-            {
-                if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+            if (id <= 0) throw new UserErrorException(Resources.Error_IncorrectId);
 
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var driver = await _driversService.DeleteDriverByIdAsync(id, userLogin);
+            var driver = await _driversService.DeleteDriverAsync(id, userLogin);
 
-                if (driver == null) return NotFound();
+            if (driver == null) return NoContent();
 
-                var driverModel = _mapper.Map<DriverModel>(driver);
+            var driverModel = _mapper.Map<DriverModel>(driver);
 
-                return Ok(driverModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы БД");
-                return BadRequest(e.Message);
-            }
+            return Ok(driverModel.Id);
         }
 
         /// <summary>
@@ -154,24 +132,18 @@ namespace TransportManager.Controllers
         [Route("get_all")]
         public async Task<IActionResult> GetAllDriversAsync()
         {
-            try
-            {
-                var userLogin = HttpContext.User.Identity.Name;
 
-                var drivers = await _driversService.GetAllDriversAsync(userLogin);
+            var userLogin = HttpContext.User.Identity.Name;
 
-                if (drivers == null) return NotFound();
+            var drivers = await _driversService.GetAllDriversAsync(userLogin);
 
-                var driverModels = drivers.Select(driver => _mapper.Map<DriverModel>(driver))
-                                          .ToList();
+            if (drivers == null || drivers.Count == 0) return NoContent();
 
-                return Ok(driverModels);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы БД");
-                return BadRequest(e.Message);
-            }
+            var driverModels = drivers.Select(driver => _mapper.Map<DriverModel>(driver))
+                                      .ToList();
+
+            return Ok(driverModels);
+
         }
 
         /// <summary>
@@ -182,27 +154,19 @@ namespace TransportManager.Controllers
         [HttpPut]
         [Route("remove")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> RemoveDriverByIdAsync(int id)
+        public async Task<IActionResult> RemoveDriverAsync(int id)
         {
-            try
-            {
-                if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+            if (id <= 0) throw new UserErrorException(Resources.Error_IncorrectId);
 
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var driver = await _driversService.RemoveDriverByIdAsync(id, userLogin);
+            var driver = await _driversService.RemoveDriverAsync(id, userLogin);
 
-                if (driver == null) return NotFound();
+            if (driver == null) return NoContent();
 
-                var driverModel = _mapper.Map<DriverModel>(driver);
+            var driverModel = _mapper.Map<DriverModel>(driver);
 
-                return Ok(driverModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы БД");
-                return BadRequest(e.Message);
-            }
+            return Ok(driverModel.Id);
         }
     }
 }

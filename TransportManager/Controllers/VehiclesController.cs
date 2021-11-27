@@ -4,8 +4,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Models;
-using Services.Abstract;
+using TransportManager.Common.Exceptions;
+using TransportManager.Models;
+using TransportManager.Services.Abstract;
 
 namespace TransportManager.Controllers
 {
@@ -33,27 +34,19 @@ namespace TransportManager.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> GetVehicleByIdAsync(int id)
+        public async Task<IActionResult> GetVehicleAsync(int id)
         {
-            try
-            {
-                if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+            if (id <= 0) throw new UserErrorException(Resources.Error_IncorrectId);
 
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var vehicle = await _vehiclesService.GetVehicleByIdAsync(id, userLogin);
+            var vehicle = await _vehiclesService.GetVehicleAsync(id, userLogin);
 
-                if (vehicle == null) return NotFound();
+            if (vehicle == null) return NoContent();
 
-                var vehicleModel = _mapper.Map<VehicleModel>(vehicle);
+            var vehicleModel = _mapper.Map<VehicleModel>(vehicle);
 
-                return Ok(vehicleModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы с БД");
-                return BadRequest(e.Message);
-            }
+            return Ok(vehicleModel);
         }
 
         /// <summary>
@@ -66,22 +59,18 @@ namespace TransportManager.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddVehicleAsync(VehicleModel vehicleModel)
         {
-            try
-            {
-                if (vehicleModel == null) throw new ArgumentNullException(nameof(vehicleModel));
+            if (vehicleModel == null) throw new ArgumentNullException(nameof(vehicleModel));
+            if (vehicleModel.Id != 0) throw new UserErrorException(Resources.Error_IdAssignment);
+            if (vehicleModel.IsDeleted) throw new UserErrorException(Resources.Error_IsDeletedTrue);
+            if (vehicleModel.SoftDeletedDate != null)
+                throw new UserErrorException(Resources.Error_SoftDeletedDateAssignment);
 
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var vehicle = await _vehiclesService.AddVehicleAsync(vehicleModel, userLogin);
-                var addedVehicleModel = _mapper.Map<VehicleModel>(vehicle);
+            var vehicle = await _vehiclesService.AddVehicleAsync(vehicleModel, userLogin);
+            var addedVehicleModel = _mapper.Map<VehicleModel>(vehicle);
 
-                return Ok(addedVehicleModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы с БД");
-                return BadRequest(e.Message);
-            }
+            return Ok(addedVehicleModel.Id);
         }
 
         /// <summary>
@@ -94,25 +83,21 @@ namespace TransportManager.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateVehicleAsync(VehicleModel vehicleModel)
         {
-            try
-            {
-                if (vehicleModel == null) throw new ArgumentNullException(nameof(vehicleModel));
+            if (vehicleModel == null) throw new ArgumentNullException(nameof(vehicleModel));
+            if (vehicleModel.Id <= 0) throw new UserErrorException(Resources.Error_IncorrectId);
+            if (vehicleModel.IsDeleted) throw new UserErrorException(Resources.Error_IsDeletedTrue);
+            if (vehicleModel.SoftDeletedDate != null)
+                throw new UserErrorException(Resources.Error_SoftDeletedDateAssignment);
 
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var updVehicle = await _vehiclesService.UpdateVehicleAsync(vehicleModel, userLogin);
+            var updVehicle = await _vehiclesService.UpdateVehicleAsync(vehicleModel, userLogin);
 
-                if (updVehicle == null) return NotFound();
+            if (updVehicle == null) return NoContent();
 
-                var updVehicleModel = _mapper.Map<VehicleModel>(updVehicle);
+            var updVehicleModel = _mapper.Map<VehicleModel>(updVehicle);
 
-                return Ok(updVehicleModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы с БД");
-                return BadRequest(e.Message);
-            }
+            return Ok(updVehicleModel.Id);
         }
 
         /// <summary>
@@ -123,27 +108,19 @@ namespace TransportManager.Controllers
         [HttpDelete]
         [Route("")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteVehicleByIdAsync(int id)
+        public async Task<IActionResult> DeleteVehicleAsync(int id)
         {
-            try
-            {
-                if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+            if (id <= 0) throw new UserErrorException(Resources.Error_IncorrectId);
 
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var vehicle = await _vehiclesService.DeleteVehicleByIdAsync(id, userLogin);
+            var vehicle = await _vehiclesService.DeleteVehicleAsync(id, userLogin);
 
-                if (vehicle == null) return NotFound();
+            if (vehicle == null) return NoContent();
 
-                var vehicleModel = _mapper.Map<VehicleModel>(vehicle);
+            var vehicleModel = _mapper.Map<VehicleModel>(vehicle);
 
-                return Ok(vehicleModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы с БД");
-                return BadRequest(e.Message);
-            }
+            return Ok(vehicleModel.Id);
         }
 
         /// <summary>
@@ -154,24 +131,16 @@ namespace TransportManager.Controllers
         [Route("get_all")]
         public async Task<IActionResult> GetAllVehiclesAsync()
         {
-            try
-            {
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var vehicles = await _vehiclesService.GetAllVehiclesAsync(userLogin);
+            var vehicles = await _vehiclesService.GetAllVehiclesAsync(userLogin);
 
-                if (vehicles == null) return NotFound();
+            if (vehicles == null || vehicles.Count == 0) return NoContent();
 
-                var vehicleModels = vehicles.Select(vehicle => _mapper.Map<VehicleModel>(vehicle))
-                    .ToList();
+            var vehicleModels = vehicles.Select(vehicle => _mapper.Map<VehicleModel>(vehicle))
+                                        .ToList();
 
-                return Ok(vehicleModels);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы с БД");
-                return BadRequest(e.Message);
-            }
+            return Ok(vehicleModels);
         }
 
         /// <summary>
@@ -182,27 +151,19 @@ namespace TransportManager.Controllers
         [HttpPut]
         [Route("remove")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> RemoveVehicleByIdAsync(int id)
+        public async Task<IActionResult> RemoveVehicleAsync(int id)
         {
-            try
-            {
-                if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+            if (id <= 0) throw new UserErrorException(Resources.Error_IncorrectId);
 
-                var userLogin = HttpContext.User.Identity.Name;
+            var userLogin = HttpContext.User.Identity.Name;
 
-                var vehicle = await _vehiclesService.RemoveVehicleByIdAsync(id, userLogin);
+            var vehicle = await _vehiclesService.RemoveVehicleAsync(id, userLogin);
 
-                if (vehicle == null) return NotFound();
+            if (vehicle == null) return NoContent();
 
-                var vehicleModel = _mapper.Map<VehicleModel>(vehicle);
+            var vehicleModel = _mapper.Map<VehicleModel>(vehicle);
 
-                return Ok(vehicleModel);
-            }
-            catch (Exception e)
-            {
-                if (e is Npgsql.PostgresException) return BadRequest("Ошибка работы с БД");
-                return BadRequest(e.Message);
-            }
+            return Ok(vehicleModel.Id);
         }
     }
 }

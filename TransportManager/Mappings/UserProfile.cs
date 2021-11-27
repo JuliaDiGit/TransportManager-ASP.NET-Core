@@ -1,9 +1,9 @@
-﻿using Authorization.DTO;
+﻿using TransportManager.Authorization.DTO;
 using AutoMapper;
-using Domain;
-using Entities;
-using Models;
-using Models.Authorization;
+using TransportManager.Domain;
+using TransportManager.Entities;
+using TransportManager.Models;
+using TransportManager.Models.Authorization;
 
 namespace TransportManager.Mappings
 {
